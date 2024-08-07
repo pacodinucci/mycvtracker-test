@@ -1,0 +1,16 @@
+# Ignore macOS system files
+.DS_Store
+__MACOSX/
+
+# Ignore environment variables
+.env
+
+# Ignore build output
+interview-app/.next
+interview-app/.next/cache
+interview-app/.next/server
+interview-app/.next/static
+
+# Ignore IDE-specific files
+.vscode/
+*.iml
