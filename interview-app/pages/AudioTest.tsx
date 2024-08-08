@@ -1,9 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
 
-import AudioTestBtn from '/Users/bradleyamankwah/Downloads/interview-app/components/AudioPreviewTester';
+import AudioTestBtn from '../components/AudioPreviewTester';
 import "react-responsive-modal/styles.css";
 import { createRoot } from 'react-dom/client';
-import Styles from '/Users/bradleyamankwah/Downloads/interview-app/styles/Audio.module.css'
+import Styles from '../styles/Audio.module.css';
+
 import { text } from 'stream/consumers';
 
 import { useAudioRecorder } from 'react-audio-voice-recorder';
