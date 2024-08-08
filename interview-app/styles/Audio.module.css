@@ -1,0 +1,20 @@
+.audioSection{
+    text-align:Center;
+    background-color:white;
+    padding:100px
+}
+
+.interviewbtn{
+    background-color:violet;
+    border-radius:25px;
+    padding:34px;
+    color:white;
+    border:none;
+    font-weight:bold
+}
+
+.audiopos{
+    position:abs;
+    top:230px;
+    left:400px
+}
