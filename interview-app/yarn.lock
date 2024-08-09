@@ -2661,6 +2661,11 @@
   "resolved" "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz"
   "version" "16.13.1"
 
+"react-media-recorder@^1.6.5":
+  "integrity" "sha512-YcARNZ498jtmOJ+O7GkaokR0DbMNV+YSXB0msAHMZk9wharBuVSWYCXKiIL5JAnR5cs6ebXaOtkkGsM3uIq7Bw=="
+  "resolved" "https://registry.npmjs.org/react-media-recorder/-/react-media-recorder-1.6.5.tgz"
+  "version" "1.6.5"
+
 "react-onclickoutside@^6.13.0":
   "integrity" "sha512-LdrrxK/Yh9zbBQdFbMTXPp3dTSN9B+9YJQucdDu3JNKRrbdU+H+/TVONJoWtOwy4II8Sqf1y/DTI6w/vGPYW0w=="
   "resolved" "https://registry.npmjs.org/react-onclickoutside/-/react-onclickoutside-6.13.1.tgz"
