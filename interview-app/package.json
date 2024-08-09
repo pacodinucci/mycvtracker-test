@@ -37,6 +37,7 @@
     "react-router-dom": "^6.14.2",
     "react-speech-kit": "^3.0.1",
     "react-voice-recorder-player": "^1.2.0",
+    "react-webcam": "^7.2.0",
     "reactstrap": "^9.1.10",
     "sass": "^1.56.1"
   },
