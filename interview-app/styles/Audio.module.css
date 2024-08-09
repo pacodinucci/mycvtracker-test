@@ -19,6 +19,44 @@
     left:400px
 }
 
+.startRecording {
+    background-color: #0e6bb7; /* Green background */
+    color: white; /* White text */
+    padding: 10px 20px; /* Padding around the text */
+    font-size: 16px; /* Font size */
+    border: none; /* Remove the default border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease; /* Smooth transition for background color */
+  }
+  
+  .startRecording:hover{
+    color: white;
+    background-color:#0e6bb7; /*  */
+   
+    
+  }
+  
+  .startRecording:active{
+    color: white;
+    background-color: #0e6bb7; /*  */
+    
+    
+  }
+.text{
+    
+    font-style:normal;
+    font-family: 'Times New Roman', Times, serif;
+}
+.audioplayer {
+    width: 100%; /* Full width */
+    height: 40px; /* Fixed height */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    outline: none; /* Remove default outline */
+    border: 1px solid #ccc; /* Light border */
+  }
+
 .videoSize{
     width: 500px;
     height: 380px,

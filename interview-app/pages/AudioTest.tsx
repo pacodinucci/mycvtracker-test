@@ -1,51 +1,52 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
+
 import AudioTestBtn from '../components/AudioPreviewTester';
 import "react-responsive-modal/styles.css";
 import { createRoot } from 'react-dom/client';
-import Styles from '../styles/Audio.module.css';
+import Styles from '../styles/Audio.module.css'
+import { text } from 'stream/consumers';
+
+import { useAudioRecorder } from 'react-audio-voice-recorder';
 
 const AudioTest = () => {
-    const [displayAudio, setDisplayAudio] = useState(false);
+    const [displayAudio, SetDisplayAudio] = useState(false);
+
     const [show, setShow] = useState(false);
-
-    useEffect(() => {
-        // This code will only run on the client side
+    
+  
+   const GiveAudio = ()=>{
         const TestAudioSectionPreview = document.getElementById('TestAudioSection');
-        const btn = document.getElementById('btn');
+        
 
-        const GiveAudio = () => {
-            if (TestAudioSectionPreview) {
-                const root = createRoot(TestAudioSectionPreview);
-                root.render(
-                    <div>
-                        <AudioTestBtn />
-                    </div>
-                );
-            }
+        if (TestAudioSectionPreview) {
+          const root = createRoot(TestAudioSectionPreview);
+          root.render(
+              
+      
+                  <div>
+                     <AudioTestBtn/>
+                     </div>
+                  )
+        }  
         };
+return(
+    <>  
+    <div id='TestAudioSection' className={Styles.audioSection}>
+   
+        <h1>Hi</h1>
+        <h1>Test your audio before you start your interview 
+        </h1>
+        <button onClick={GiveAudio} className={Styles.interviewbtn} >Start Interview</button>
+    </div>
+    </>
+    
+    )
 
-        // Add event listener
-        if (btn) {
-            btn.addEventListener('click', GiveAudio);
-        }
+}
+   
 
-        // Cleanup event listener
-        return () => {
-            if (btn) {
-                btn.removeEventListener('click', GiveAudio);
-            }
-        };
-    }, []); // Empty dependency array means this effect runs once when the component mounts
+                      
 
-    return (
-        <>
-            <div id='TestAudioSection' className={Styles.audioSection}>
-                <h1>Hi</h1>
-                <h1>Test your audio before you start your interview</h1>
-                <button id='btn' className={Styles.interviewbtn}>Before you start Test your audio</button>
-            </div>
-        </>
-    );
-};
 
-export default AudioTest;
+export  default AudioTest
+
