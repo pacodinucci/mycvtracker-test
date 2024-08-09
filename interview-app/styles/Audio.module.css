@@ -20,7 +20,7 @@
 }
 
 .startRecording {
-    background-color: #28a745; /* Green background */
+    background-color: #0e6bb7; /* Green background */
     color: white; /* White text */
     padding: 10px 20px; /* Padding around the text */
     font-size: 16px; /* Font size */
@@ -31,15 +31,17 @@
   }
   
   .startRecording:hover{
-    background-color: #218838; /* Darker green on hover */
-    border-radius: 50px;
+    color: white;
+    background-color:#0e6bb7; /*  */
+   
     
   }
   
   .startRecording:active{
-    background-color: #1e7e34; /* Even darker green when the button is active */
-    border-radius: 50px;
-    padding:10px
+    color: white;
+    background-color: #0e6bb7; /*  */
+    
+    
   }
 .text{
     
@@ -49,7 +51,6 @@
 .audio-player {
     width: 100%; /* Full width */
     height: 40px; /* Fixed height */
-    background-color: #0a4783; /* Light gray background */
     border-radius: 8px; /* Rounded corners */
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     outline: none; /* Remove default outline */
