@@ -18,7 +18,7 @@ export const alerts: AlertsType = {
     type: "danger",
     message: "User already exists!",
   },
-  regsitrationSuccess: {
+  registrationSuccess: {
     type: "success",
     message:
       "An activation link has been sent to the registered E-mail ID. Please activate your account to continue with the Registration Process.",

@@ -45,6 +45,7 @@ export const UserStateProvider = ({ children }: { children: ReactElement }) => {
     }
     setIsLoading(false);
   }, []);
+
   const loginUser = useCallback(
     async (email: string, password: string, rememberme: boolean) => {
       try {
@@ -54,7 +55,12 @@ export const UserStateProvider = ({ children }: { children: ReactElement }) => {
           setToken(response.token);
         }
       } catch (e: any) {
-        showErrorToast(alerts[e?.response.status || "undefined"].message);
+        const alertKey = e?.response?.status || "undefined";
+        if (alerts[alertKey]) {
+          showErrorToast(alerts[alertKey].message);
+        } else {
+          showErrorToast("An unexpected error occurred.");
+        }
       }
     },
     [showErrorToast]
@@ -65,10 +71,14 @@ export const UserStateProvider = ({ children }: { children: ReactElement }) => {
       try {
         const response = await sendAddUser(user);
         router.replace("/login");
-        showSuccessToast(alerts.regsitrationSuccess.message);
+        showSuccessToast(alerts.registrationSuccess.message);
       } catch (e: any) {
-        console.log(e);
-        showErrorToast(alerts[e.response.status].message);
+        const alertKey = e?.response?.status || "undefined";
+        if (alerts[alertKey]) {
+          showErrorToast(alerts[alertKey].message);
+        } else {
+          showErrorToast("An unexpected error occurred.");
+        }
       }
     },
     [showSuccessToast, showErrorToast, router]
