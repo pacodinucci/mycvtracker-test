@@ -5,14 +5,13 @@ import "react-responsive-modal/styles.css";
 import { createRoot } from 'react-dom/client';
 import Styles from '../styles/Audio.module.css'
 import { text } from 'stream/consumers';
-
 import { useAudioRecorder } from 'react-audio-voice-recorder';
 
 const AudioTest = () => {
     const [displayAudio, SetDisplayAudio] = useState(false);
 
     const [show, setShow] = useState(false);
-    
+
   
    const GiveAudio = ()=>{
         const TestAudioSectionPreview = document.getElementById('TestAudioSection');

@@ -244,6 +244,11 @@ const Interview_app = () => {
     [hasPermission, getQuestions]
   );
 
+  const AudioPreview =  () => {
+    router.push("../AudioTest")
+    //will take the the user to the preview page
+  }
+
   const skipQuestion = useCallback(() => {
     stopRecording();
     startCountdown();
@@ -303,7 +308,7 @@ const Interview_app = () => {
             currectQuestion={currectQuestion}
             timeLeft={countDownTimer}
             isUploading={isUploading}
-            startInterview={() => handleStartInterview(token, types)}
+            startInterview={AudioPreview}
             stopRecording={stopRecording}
             skipQuestion={skipQuestion}
             blob={audioBlob}

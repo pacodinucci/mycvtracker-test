@@ -4,12 +4,18 @@ import Webcam from 'react-webcam';
 import { AudioRecorder, useAudioRecorder } from 'react-audio-voice-recorder';
 import { Box, Highlight, List, Stack, Title } from "@mantine/core";
 import Styles from '../styles/Audio.module.css'
+import { useRouter } from "next/router";
 
 
 
 const AudioPreviewTester = () => {
   const { status, startRecording, stopRecording, mediaBlobUrl } = useReactMediaRecorder({ audio: true });
+  const router = useRouter();
 
+  const GoToMainPage =()=>{
+    router.push("../interview")
+
+  }
   return (
     <>
     <h1 className={Styles.text}>When your ready test your audio</h1>
@@ -23,13 +29,16 @@ const AudioPreviewTester = () => {
       {/* Display the recorded audio */}
       {/* {mediaBlobUrl && <audio src={mediaBlobUrl} controls />} */}
       <div>
+ 
       {mediaBlobUrl && (
         <audio
           src={mediaBlobUrl}
           controls
           className={Styles.audioplayer} // Apply the CSS class
         />
+        
       )}
+           <button>Proceed to interview</button>
     </div>
     </>
   );
