@@ -42,6 +42,10 @@ const VideoInterview_app = () => {
   const [recordingUrl, setRecordingUrl] = useState(""); // State to hold the recording URL
 
 
+
+
+
+  
   useEffect(() => {
     const initialize = async () => {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -278,6 +282,12 @@ const VideoInterview_app = () => {
     setCurrentQuestion((prev) => prev + 1);
   }, [startCountdown, stopRecording]);
 
+  const VideoPreview =  () => {
+    router.push("../VideoTest")
+    //will take the the user to the preview page
+  }
+
+
   if (questions.length > 0 && currectQuestion >= questions.length) {
     return (
       <Container>
@@ -333,7 +343,7 @@ const VideoInterview_app = () => {
             currectQuestion={currectQuestion}
             timeLeft={countDownTimer}
             isUploading={isUploading}
-            startInterview={() => handleStartInterview(token, types)}
+            startInterview={VideoPreview}
             stopRecording={stopRecording}
             skipQuestion={skipQuestion}
             blob={audioBlob}

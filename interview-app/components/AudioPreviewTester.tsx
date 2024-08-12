@@ -10,12 +10,9 @@ import { useRouter } from "next/router";
 
 const AudioPreviewTester = () => {
   const { status, startRecording, stopRecording, mediaBlobUrl } = useReactMediaRecorder({ audio: true });
-  const router = useRouter();
+  //const router = useRouter();
 
-  const GoToMainPage =()=>{
-    router.push("../interview")
-
-  }
+  
   return (
     <>
     <h1 className={Styles.text}>When your ready test your audio</h1>
@@ -38,7 +35,7 @@ const AudioPreviewTester = () => {
         />
         
       )}
-           <button>Proceed to interview</button>
+           <button><a href="http://localhost:3005/interview-app/interview"></a>Proceed to interview</button>
     </div>
     </>
   );

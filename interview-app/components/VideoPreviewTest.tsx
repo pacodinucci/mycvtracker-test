@@ -69,7 +69,7 @@ const VideoPreviewTester = () => {
         />
        </>)}
        <br />
-       <button ><a href="http://localhost:3001/interview-app/VideoInterview">Are you happy with the Test </a></button>
+       <button ><a href="http://localhost:3005/interview-app/VideoInterview">Proceed to Interview</a></button>
 
         </>
     );
