@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef} from "react";
 import { useReactMediaRecorder } from 'react-media-recorder';
 import Styles from '../styles/Audio.module.css';
 import Webcam from 'react-webcam';
 import VideoTest from '../pages/VideoTest';
 import { ST } from 'next/dist/shared/lib/utils';
 import { useNavigate } from 'react-router-dom';
+type Operation = "startInterview" | "loading" | "recording" | "countdown" | "stopped";
 
 
 const VideoPreviewTester = () => {
@@ -16,6 +17,8 @@ const VideoPreviewTester = () => {
         facingMode: "user"
     };
     const [show, setShow] = useState(true);
+    const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+    const [operation, setOperation] = useState<Operation>("startInterview");
 
 
     useEffect(() => {

@@ -308,7 +308,7 @@ const Interview_app = () => {
             currectQuestion={currectQuestion}
             timeLeft={countDownTimer}
             isUploading={isUploading}
-            startInterview={AudioPreview}
+            startInterview={() => handleStartInterview(token, types)}
             stopRecording={stopRecording}
             skipQuestion={skipQuestion}
             blob={audioBlob}

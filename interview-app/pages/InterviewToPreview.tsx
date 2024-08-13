@@ -1,21 +1,22 @@
-import React, { useState, useEffect, useCallback, useRef} from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Alert, Button, Container, Header, Box, Modal, Flex, Title, Progress, Text, LoadingOverlay } from "@mantine/core";
 import { useRouter } from "next/router";
+import AudioController from "../components/AudioController";
 import { getCandidateDetails, getMyQuestions } from "../apis/mycvtracker/questions";
 import { Candidatedata, Question } from "../types/question_types";
 import Instructions from "../components/Instructions";
 import { submitAnswer } from "../apis/mycvtracker/submit_interview";
 import styles from "../styles/questionAdd.module.css";
-import VideoController from "../components/VideoController";
+import AudioController_new from "../components/AudioController_new";
 import { useUserState } from "../hooks/useUserState";
 import { authRoutes } from "../data/route";
-import VideoTest from "./VideoTest";
+
 
 
 
 type Operation = "startInterview" | "loading" | "recording" | "countdown" | "stopped";
 type play = "play_rec" | "stop_recording" | "uploading";
-const VideoInterview_app = () => {
+const Interview_app = () => {
   const router = useRouter();
   const [token, setToken] = useState("");
   const [types, setTypes] = useState<string[]>([]);
@@ -27,6 +28,7 @@ const VideoInterview_app = () => {
   const [countdownInterval, setCountdownInterval] = useState<NodeJS.Timer | null>(null);
   const [operation, setOperation] = useState<Operation>("startInterview");
   const [showInstructions, setShowInstructions] = useState(false);
+  const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [play, setPlay] = useState<play>("play_rec");
@@ -34,57 +36,17 @@ const VideoInterview_app = () => {
   const [candidate, setCandidate] = useState<Candidatedata>({timeBetweenQuestions: 60} as Candidatedata);
   const [isPreparing, setIsPreparing] = useState(false);
 
-      // Create a reference for the video element.
-  const videoRef = useRef<HTMLVideoElement | null>(null); 
-
-  const [recorder, setRecorder] = useState<MediaRecorder | null>(null); 
-  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
-  const [recordingUrl, setRecordingUrl] = useState(""); // State to hold the recording URL
-
-
-
-
-
-
   useEffect(() => {
     const initialize = async () => {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video : {facingMode: 'user'},
         audio: true,
-        
       });
-
-      setHasPermission(true);
-
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.play();
-      }
-
-      setCameraStream(stream);
-
-      const recorder = new MediaRecorder(stream);
-      setRecorder(recorder);
-
-      const recordingChunks: BlobPart[] = []; 
-      recorder.ondataavailable = (e) => { 
-          if (e.data.size > 0) { 
-              recordingChunks.push(e.data); 
-          }
-      };
-
-      recorder.onstop = () => { 
-        // onstop event of media recorder  
-        const blob = new Blob(recordingChunks, { type: 'video/webm' });
-        const url = URL.createObjectURL(blob); 
-        setRecordingUrl(url); // Set recording URL
-        if (cameraStream) {
-            cameraStream.getTracks().forEach(track => track.stop());
-        }
-        if (videoRef.current) {
-            videoRef.current.srcObject = null; // Remove stream
-        }
-      };
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.addEventListener("dataavailable", (event) => {
+        console.log(event);
+        setAudioBlob(event.data);
+      });
+      setRecorder(mediaRecorder);
     };
 
     initialize();
@@ -109,6 +71,7 @@ const VideoInterview_app = () => {
   }
 };
 }, [user, isLoadingUser]);
+
   useEffect(() => {
     const prepareInterview = async () => {
       if (router.query.token) {
@@ -117,9 +80,6 @@ const VideoInterview_app = () => {
           setIsPreparing(true)
           const candToken = router.query.token;
           setToken(candToken);
-
-
-          //http://localhost:3000/interview-app/VideoInterview?token=03f3be7d1eec40eb8d2ab5de6cc2f929&interviewType=python01
           router.replace(router.asPath, router.route, { shallow: true });
           try {
 
@@ -148,6 +108,14 @@ const VideoInterview_app = () => {
   }, [router]);
 
 
+  // TODO: Enable before deployment
+  useEffect(() => {
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then(() => setHasPermission(true))
+      .catch(() => setHasPermission(false));
+  }, []);
+
   const startCountdown = useCallback(() => {
     setCountDownTimer(10);
     const time = setInterval(() => {
@@ -159,6 +127,8 @@ const VideoInterview_app = () => {
     });
     setOperation("countdown");
   }, []);
+
+
 
   const startRecording = useCallback(() => {
     const {timeBetweenQuestions} = candidate
@@ -264,9 +234,7 @@ const VideoInterview_app = () => {
 
   const handleStartInterview = useCallback(
     (token: string, types: string[]) => {
-      console.log(hasPermission)
       if (hasPermission && types.length > 0 && token.length > 2) {
-        console.log("Function Executed")
         setOperation("loading");
         getQuestions(token, types);
       } else {
@@ -276,17 +244,16 @@ const VideoInterview_app = () => {
     [hasPermission, getQuestions]
   );
 
+  const AudioPreview =  () => {
+    router.push("../AudioTest")
+    //will take the the user to the preview page
+  }
+
   const skipQuestion = useCallback(() => {
     stopRecording();
     startCountdown();
     setCurrentQuestion((prev) => prev + 1);
   }, [startCountdown, stopRecording]);
-
-  const VideoPreview =  () => {
-    router.push("../VideoTest")
-    //will take the the user to the preview page
-  }
-
 
   if (questions.length > 0 && currectQuestion >= questions.length) {
     return (
@@ -306,9 +273,7 @@ const VideoInterview_app = () => {
   const {timeBetweenQuestions} = candidate
   const itwQuestion = questions[currectQuestion]
 
-  
   return (
-   
     <Box>
        <LoadingOverlay visible={isPreparing} zIndex={99999}/>
       <Modal opened={showInstructions && !isPreparing} onClose={() => setShowInstructions(false)} size="xl">
@@ -337,34 +302,19 @@ const VideoInterview_app = () => {
 
           <div className={styles.quetion_fsize}>{currectQuestion > -1 && itwQuestion?.question}</div>
 
-          <VideoController
+          <AudioController_new
             operation={operation}
             totalQuestions={questions.length}
             currectQuestion={currectQuestion}
             timeLeft={countDownTimer}
             isUploading={isUploading}
-            startInterview={() => handleStartInterview(token, types)}
+            startInterview={AudioPreview}
             stopRecording={stopRecording}
             skipQuestion={skipQuestion}
             blob={audioBlob}
             uploadAnswer={() => uploadAudio(audioBlob, countDownTimer, currectQuestion)}
             play={play}
           />
-
-          <> 
-            {recordingUrl && (
-                <div style={{width:'100%', display:'flex', justifyContent:'center'}}>
-                    <video 
-                        src={recordingUrl} 
-                        
-                        height={400} 
-                        width={550} 
-                        controls 
-                        autoPlay 
-                        />     
-               </div>
-            )}
-          </> 
 
         </Flex>
       </Header>
@@ -396,4 +346,4 @@ const VideoInterview_app = () => {
   );
 };
 
-export default VideoInterview_app;
+export default Interview_app;

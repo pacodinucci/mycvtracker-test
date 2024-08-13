@@ -875,25 +875,7 @@ const GetResults = () => {
       >
         Assign Interview
       </Button>
-      {/* <Paper p="md" my="md">
-        <form onSubmit={details.onSubmit(handleFormSubmit)}>
-          <TextInput
-            placeholder="johndoe@email.com"
-            label="Candidate Email"
-            withAsterisk
-            {...details.getInputProps("candidate")}
-          />
-          <TextInput placeholder="token" label="Token" {...details.getInputProps("token")} withAsterisk />
-          <TextInput placeholder="John Doe" label="Candidate Name" {...details.getInputProps("candidateName")} />
-          <TextInput placeholder="https://mycvtracker.com" label="Job Link" {...details.getInputProps("lobLink")} />
-          <Button type="submit" disabled={isLoading} mt="lg">
-            Get Interview Results
-          </Button>
-        </form>
-      </Paper> */}
-      {/* <Button type="button" disabled={isLoading} mt="lg" onClick={getAllResults} className={styles.search}>
-        Get Candidate Details
-      </Button> */}
+   
       {showEmployer && (
         <div>
           <TextInput

@@ -95,3 +95,5 @@ export const sendDeleteQuestion = async (token: string, question: Question) => {
     throw e;
   }
 };
+
+//http://localhost:3005//interview-app/VideoInterview?token=4a979b61bfc749a7bb5a65eafc2aff65&interviewType=PRODUCTMANAGER01

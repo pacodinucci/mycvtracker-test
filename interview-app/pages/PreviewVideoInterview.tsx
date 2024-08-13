@@ -45,7 +45,7 @@ const VideoInterview_app = () => {
 
 
 
-
+  
   useEffect(() => {
     const initialize = async () => {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -343,7 +343,7 @@ const VideoInterview_app = () => {
             currectQuestion={currectQuestion}
             timeLeft={countDownTimer}
             isUploading={isUploading}
-            startInterview={() => handleStartInterview(token, types)}
+            startInterview={VideoPreview}
             stopRecording={stopRecording}
             skipQuestion={skipQuestion}
             blob={audioBlob}
