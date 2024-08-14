@@ -11,9 +11,6 @@ import AudioController_new from "../components/AudioController_new";
 import { useUserState } from "../hooks/useUserState";
 import { authRoutes } from "../data/route";
 
-
-
-
 type Operation = "startInterview" | "loading" | "recording" | "countdown" | "stopped";
 type play = "play_rec" | "stop_recording" | "uploading";
 const Interview_app = () => {

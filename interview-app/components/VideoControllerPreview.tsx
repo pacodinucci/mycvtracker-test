@@ -6,6 +6,7 @@ import { useMediaQuery, useSetState } from "@mantine/hooks";
 import { useUserState } from "../hooks/useUserState";
 import { getCandidateDetails } from "../apis/mycvtracker/questions";
 
+
 type Props = {
     timeLeft: number;
     operation: "startInterview" | "loading" | "recording" | "countdown" | "stopped";

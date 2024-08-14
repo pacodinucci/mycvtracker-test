@@ -1,10 +1,15 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect,createContext, useContext} from "react";
 import { Alert, Button, Flex, Loader, RingProgress, Text, Title } from "@mantine/core";
 import styles from "../styles/questionAdd.module.css";
 import PrevResponse from "./PrevResponse";
 import { useMediaQuery, useSetState } from "@mantine/hooks";
 import { useUserState } from "../hooks/useUserState";
 import { getCandidateDetails } from "../apis/mycvtracker/questions";
+import VideoTest from "../pages/VideoTest";
+import { useRouter } from "next/router";
+import { BrowserRouter as Router } from 'react-router-dom';
+
+import { useNavigate } from 'react-router-dom';
 
 type Props = {
     timeLeft: number;
@@ -17,9 +22,18 @@ type Props = {
     skipQuestion: () => void;
     uploadAnswer: () => void;
     blob: Blob | null;
-    play: "play_rec" | "stop_recording" | "uploading"
+    play: "play_rec" | "stop_recording" | "uploading";
+   
 };
+const MyContext = createContext<string | null>(null);
+//const navigate = useNavigate();
 
+
+const VideoPreview = () => {
+    return (
+        <VideoTest />
+    );
+};
 const VideoController = ({
     timeLeft,
     operation,
@@ -31,28 +45,39 @@ const VideoController = ({
     isUploading,
     play,
     currectQuestion,
-    totalQuestions
+    totalQuestions,
+    
 }: Props) => {
 
     const media = useMediaQuery("(max-width: 767px)");
     const { token } = useUserState();
     const [candName, setCandName] = useState();
+    const router = useRouter();
 
+
+
+
+   
     useEffect(() => {
-        const getCanResults = async () =>{
-        const queryParams = new URLSearchParams(window.location.search);
-        const canToken = queryParams.get("token");
-        try {
-            const response = await getCandidateDetails(token, canToken);
-            if (response) {
-                setCandName(response.candidateName);
+        const getCanResults = async () => {
+            if (typeof window !== 'undefined') {
+                const queryParams = new URLSearchParams(window.location.search);
+                const canToken = queryParams.get("token");
+               /**/
+                try {
+                    const response = await getCandidateDetails(token, canToken);
+                    if (response) {
+                        setCandName(response.candidateName);
+                    }
+                } catch (e: any) {
+                    console.log(e);
+                }
             }
-          } catch (e: any) {
-            console.log(e);
-          }
-        }
-          getCanResults();
-    },[])
+        };
+        getCanResults();
+    }, []);
+   
+
 
 
     if (operation == "startInterview") {
@@ -72,6 +97,9 @@ const VideoController = ({
             </>
         );
     }
+
+  //  if( window.)
+
 
     if (operation === "loading") {
         return (

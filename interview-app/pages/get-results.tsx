@@ -499,7 +499,7 @@ const GetResults = () => {
           );
         } else {
           // if(audioRes){
-          // window.open(`http://localhost:3000/interview-app/shared-candidate/getAudioResults?token=${token}&interviewType=ProductManager01`,'_blank');
+          // window.open(`http://localhost:3000/interview-app/shared-candidate/getAudioResults?token=${token}&ProductManager01`,'_blank');
           // }
           scrollIntoView({ alignment: "center" });
         }
