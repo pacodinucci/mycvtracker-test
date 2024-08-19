@@ -26,6 +26,7 @@ type Props = {
     uploadAnswer: () => void;
     blob: Blob | null;
     play: "play_rec" | "stop_recording" | "uploading"
+  //  currentUrl:string
 };
 
 const AudioController_new = ({

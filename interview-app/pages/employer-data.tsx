@@ -110,7 +110,6 @@ const EmployerData = () => {
 
   const handleFormSubmit = useCallback(
     async (values: FormType) => {
-      // return console.log(values.interviewType.map((t) => `${t.value}${t.level[0]}${t.level[1]}`).join("_"));
       try {
         setIsLoading(true);
         await sendEmployerData({ ...values }, token);

@@ -476,15 +476,7 @@ const GetResults = () => {
     }
   }, [getAllResults, token]);
 
-  // useEffect(() => {
-  //   if (router.query.token) {
-  //     if (!Array.isArray(router.query.token)) {
-  //       getAllResults({ token: router.query.token });
-  //       router.replace(router.asPath, router.route, { shallow: true });
-  //     }
-  //   }
-  // }, [router, getAllResults]);
-
+  
   const getInterviewResponce = useCallback(
     async (token: any) => {
 

@@ -1,14 +1,17 @@
 import React, { useState, useEffect, useCallback, useRef} from "react";
 import { useReactMediaRecorder } from 'react-media-recorder';
-import Styles from '../styles/Audio.module.css';
 import Webcam from 'react-webcam';
 import VideoTest from '../pages/VideoTest';
 import { ST } from 'next/dist/shared/lib/utils';
 import { useNavigate } from 'react-router-dom';
 type Operation = "startInterview" | "loading" | "recording" | "countdown" | "stopped";
+import Styles from '../styles/Video.module.css';
+import Style from '../styles/Audio.module.css';
+type Link = {
+  Url: string;
+};
 
-
-const VideoPreviewTester = () => {
+const VideoPreviewTester: React.FC<Link> = ({ Url }) => {
     const { status, startRecording, stopRecording, mediaBlobUrl } = useReactMediaRecorder({ video: true });
     const video=document.getElementById("video")
     const videoConstraints = {
@@ -47,12 +50,12 @@ const VideoPreviewTester = () => {
      
       <>
       
-        <div className={Styles.audioSection}>
-            <h1>Test Your Video When You're Ready</h1>
+        <div className={Style.audioSection}>
+            <h1 className={Styles.text} >Test Your Video When You're Ready</h1>
             
-            <button id="StartRecord">Start Recording</button>
-            <button id="StopRecord">Stop Recording</button>
-           
+            <button id="StartRecord" className={`${Styles.startButton} ${Styles.button} ${Styles.text} ${Styles.buttonContainer}`}>Start Recording</button>
+            <button id="StopRecord" className= {`${Styles.stopButton} ${Styles.button}  ${Styles.text} ${Styles.buttonContainer}`}>Stop Recording</button>
+         
             {/* Display the recorded video */}
             {!show &&(
               <>
@@ -72,7 +75,9 @@ const VideoPreviewTester = () => {
         />
        </>)}
        <br />
-       <button ><a href="http://localhost:3005/interview-app/VideoInterview">Proceed to Interview</a></button>
+       <button >
+       <a href={Url} target="_blank" rel="noopener noreferrer" className={Styles.linkText}>Proceed to interview</a>
+      </button>
 
         </>
     );
