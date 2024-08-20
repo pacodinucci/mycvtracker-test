@@ -1,19 +1,22 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Alert, Button, Container, Header, Box, Modal, Flex, Title, Progress, Text, LoadingOverlay } from "@mantine/core";
 import { useRouter } from "next/router";
+import AudioController from "../components/AudioController";
 import { getCandidateDetails, getMyQuestions } from "../apis/mycvtracker/questions";
 import { Candidatedata, Question } from "../types/question_types";
 import Instructions from "../components/Instructions";
 import { submitAnswer } from "../apis/mycvtracker/submit_interview";
 import styles from "../styles/questionAdd.module.css";
-import VideoController from "../components/VideoController";
+import AudioController_new from "../components/AudioController_new";
 import { useUserState } from "../hooks/useUserState";
 import { authRoutes } from "../data/route";
 
+
+
+
 type Operation = "startInterview" | "loading" | "recording" | "countdown" | "stopped";
 type play = "play_rec" | "stop_recording" | "uploading";
-
-const VideoInterview_app = () => {
+const Interview_app = () => {
   const router = useRouter();
   const [token, setToken] = useState("");
   const [types, setTypes] = useState<string[]>([]);
@@ -25,101 +28,70 @@ const VideoInterview_app = () => {
   const [countdownInterval, setCountdownInterval] = useState<NodeJS.Timer | null>(null);
   const [operation, setOperation] = useState<Operation>("startInterview");
   const [showInstructions, setShowInstructions] = useState(false);
+  const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [play, setPlay] = useState<play>("play_rec");
   const { user, isLoading: isLoadingUser } = useUserState();
-  const [candidate, setCandidate] = useState<Candidatedata>({ timeBetweenQuestions: 60 } as Candidatedata);
+  const [candidate, setCandidate] = useState<Candidatedata>({timeBetweenQuestions: 60} as Candidatedata);
   const [isPreparing, setIsPreparing] = useState(false);
-
-  // Create a reference for the video element.
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-
-  const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
-  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
-  const [recordingBlob, setRecordingBlob] = useState<Blob | null>(null); // State to hold the recording Blob
 
   useEffect(() => {
     const initialize = async () => {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'user' },
-        audio: true,
+          audio: true,
+          video: true
+        });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.addEventListener("dataavailable", (event) => {
+        console.log(event);
+        setAudioBlob(event.data);
       });
-
-      setHasPermission(true);
-
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.play();
-      }
-
-      setCameraStream(stream);
-
-      const recorder = new MediaRecorder(stream);
-      setRecorder(recorder);
-
-      const recordingChunks: BlobPart[] = [];
-      recorder.ondataavailable = (e) => {
-        if (e.data.size > 0) {
-          recordingChunks.push(e.data);
-        }
-      };
-
-      recorder.onstop = () => {
-        // onstop event of media recorder
-        const blob = new Blob(recordingChunks, { type: 'video/webm' });
-        setRecordingBlob(blob); // Set recording Blob
-        if (cameraStream) {
-          cameraStream.getTracks().forEach(track => track.stop());
-        }
-        if (videoRef.current) {
-          videoRef.current.srcObject = null; // Remove stream
-        }
-      };
+      setRecorder(mediaRecorder);
     };
-
+  
     initialize();
 
     if (user === null && !isLoadingUser) {
       document.addEventListener('contextmenu', event => {
         event.preventDefault();
-      });
+    });
 
-      document.onkeydown = function (e) {
-        if (e.ctrlKey &&
-          (e.keyCode === 67 ||
-            e.keyCode === 86 ||
-            e.keyCode === 85 ||
-            e.keyCode === 16 ||
-            e.keyCode === 73 ||
-            e.keyCode === 117)) {
-          return false;
-        } else {
-          return true;
-        }
-      }
+  document.onkeydown = function(e) {
+    if (e.ctrlKey &&
+        (e.keyCode === 67 ||
+         e.keyCode === 86 ||
+         e.keyCode === 85 ||
+         e.keyCode === 16 ||
+         e.keyCode === 73 ||
+         e.keyCode === 117)) {
+        return false;
+    } else {
+        return true;
     }
-  }, [user, isLoadingUser]);
+  }
+};
+}, [user, isLoadingUser]);
 
   useEffect(() => {
     const prepareInterview = async () => {
       if (router.query.token) {
         if (!Array.isArray(router.query.token)) {
-          setIsPreparing(true);
+
+          setIsPreparing(true)
           const candToken = router.query.token;
           setToken(candToken);
-
-          //http://localhost:3000/interview-app/VideoInterview?token=03f3be7d1eec40eb8d2ab5de6cc2f929&interviewType=python01
           router.replace(router.asPath, router.route, { shallow: true });
           try {
+
             const response = await getCandidateDetails("", candToken);
-            setCandidate(response);
+            setCandidate(response)
           } catch (e: any) {
             console.log(e);
           } finally {
-            setIsPreparing(false);
+            setIsPreparing(false)
             setTimeout(() => {
-              setShowInstructions(true);
+              setShowInstructions(true)
             }, 100);
           }
         }
@@ -131,8 +103,19 @@ const VideoInterview_app = () => {
       }
     }
 
-    prepareInterview();
+    prepareInterview()
+
+
   }, [router]);
+
+
+  // TODO: Enable before deployment
+  useEffect(() => {
+    navigator.mediaDevices
+      .getUserMedia({ audio: true, video: true })
+      .then(() => setHasPermission(true))
+      .catch(() => setHasPermission(false));
+  }, []);
 
   const startCountdown = useCallback(() => {
     setCountDownTimer(10);
@@ -146,8 +129,10 @@ const VideoInterview_app = () => {
     setOperation("countdown");
   }, []);
 
+
+
   const startRecording = useCallback(() => {
-    const { timeBetweenQuestions } = candidate;
+    const {timeBetweenQuestions} = candidate
     setOperation("recording");
     setPlay("play_rec");
     setCountDownTimer(timeBetweenQuestions);
@@ -158,60 +143,86 @@ const VideoInterview_app = () => {
     }
   }, [candidate, recorder]);
 
+  const uploadVideo = useCallback(
+    async (data: Blob | null, duration: number, question: number) => {
+      if (data === null) return;
+      if (questions.length === 0 || question === -1) return;
+      try {
+        const url = URL.createObjectURL(data);
+        console.log(url);
+        const fd = new FormData();
+        fd.append("file", data, `${new Date().toISOString()}.mov`);
+        fd.set("Candidate", token);
+        fd.set("questionId", questions[question].id.toString());
+        fd.set("attemptTime", duration.toString());
+        setIsUploading(true);
+        const response = await submitAnswer(fd);
+        setAudioBlob(null);
+        setOperation("countdown");
+        startCountdown();
+        setCurrentQuestion((prev) => prev + 1);
+      } catch (e) {
+        console.log("error");
+      } finally {
+        setIsUploading(false);
+      }
+    },
+    [token, questions, startCountdown]
+  );
+
   const stopRecording = useCallback(() => {
     if (recorder) recorder.stop();
     setPlay("stop_recording");
     setOperation("recording");
-    //setOperation("stopped");
     setCountdownInterval((prev) => {
       if (prev !== null) clearInterval(prev);
       return null;
     });
-  }, [recorder]);
+    // Assuming you have the video data in `videoBlob`
+    uploadVideo(audioBlob, countDownTimer, currectQuestion);
+  }, [recorder, uploadVideo, audioBlob, countDownTimer, currectQuestion]);
 
-
-  //Handles the video upload to the server 
-  const uploadVideo = useCallback(
+  const uploadAudio = useCallback(
     async (data: Blob | null, duration: number, question: number) => {
-        if (data === null) return; // Return is there is no video data
-        if (questions.length === 0 || question === -1) return; // Ensure valid state
+     // skipQuestion();
+    //  setOperation("countdown");
+    //  startCountdown();
+    setPlay("uploading");
+    // if (recorder) recorder.stop();
 
-        setPlay("uploading"); // Update the play state
-        setIsUploading(true); // Show uploading status
+    // setOperation("recording");
+    // //setOperation("stopped");
+    // setCountdownInterval((prev) => {
+    //   if (prev !== null) clearInterval(prev);
+    //   return null;
+    // });
 
-        const formData = new FormData();
-        formData.append("file", data, `audio_${new Date().toISOString()}.webm`); // Set file name and type
-        formData.set("Candidate", token);
-        formData.set("questionId", questions[question].id.toString());
-        formData.set("attemptTime", duration.toString());
-
-        try {
-            const response = await fetch('http://localhost:3100/api/uploadAudio', { // change this url based on the endpoint defined in the server
-                method: 'POST',
-                body: formData,
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-
-            const result = await response.json();
-            console.log('Success:', result);
-            setAudioBlob(null); // Clear the audio blob
-            setOperation("countdown"); // Set operation to countdown
-            startCountdown(); // Start the countdown for the next question
-            setCurrentQuestion(prev => prev + 1); // Move to the next question
-        } catch (error) {
-            console.error('Upload failed:', error);
-            // Handle the error (e.g., show user feedback)
-            alert('Failed to upload audio. Please try again.');
-        } finally {
-            setIsUploading(false); // Hide uploading status
-        }
+      if (data === null) return;
+      if (questions.length === 0 || question === -1) return;
+      try {
+        const url = URL.createObjectURL(data);
+        console.log(url);
+        const fd = new FormData();
+        fd.append("file", data, new Date().toISOString());
+        fd.set("Candidate", token);
+        fd.set("questionId", questions[question].id.toString());
+        fd.set("attemptTime", duration.toString());
+        setIsUploading(true);
+        const response = await submitAnswer(fd);
+        setAudioBlob(null);
+        setOperation("countdown");
+        startCountdown();
+        setCurrentQuestion((prev) => prev + 1);
+      } catch (e) {
+        console.log("error");
+      } finally {
+        setIsUploading(false);
+      }
     },
     [token, questions, startCountdown]
-);
+  );
 
+  
 
   const startInterview = useCallback(
     (startfrom: number) => {
@@ -234,8 +245,9 @@ const VideoInterview_app = () => {
 
   const getQuestions = useCallback(
     async (token: string, types: string[]) => {
+
       try {
-        const audioQuestions: Question[] = await getMyQuestions(token, types.join("_"));
+        const audioQuestions : Question[] = await getMyQuestions(token, types.join("_"));
 
         if (audioQuestions) {
           const currentQuesIdx = audioQuestions.findIndex(question => !question.answered);
@@ -246,15 +258,14 @@ const VideoInterview_app = () => {
         setToken("");
         console.log(e);
       }
+
     },
     [startInterview]
   );
 
   const handleStartInterview = useCallback(
     (token: string, types: string[]) => {
-      console.log(hasPermission);
       if (hasPermission && types.length > 0 && token.length > 2) {
-        console.log("Function Executed");
         setOperation("loading");
         getQuestions(token, types);
       } else {
@@ -277,7 +288,7 @@ const VideoInterview_app = () => {
           Thank you for attending the interview
         </Title>
         <Title order={3} align="center">
-          Our team will evaluate the answers and get back to you
+          Our team will evalute the answers and get back to you
         </Title>
         <Title order={6} align="center">
           If you have any doubts, you can contact us at info@mycvtracker.com
@@ -285,29 +296,29 @@ const VideoInterview_app = () => {
       </Container>
     );
   }
-
-  const { timeBetweenQuestions } = candidate;
-  const itwQuestion = questions[currectQuestion];
+  const {timeBetweenQuestions} = candidate
+  const itwQuestion = questions[currectQuestion]
 
   return (
     <Box>
-      <LoadingOverlay visible={isPreparing} zIndex={99999} />
+       <LoadingOverlay visible={isPreparing} zIndex={99999}/>
       <Modal opened={showInstructions && !isPreparing} onClose={() => setShowInstructions(false)} size="xl">
-        <Instructions timeBetweenQuestions={timeBetweenQuestions} />
+        <Instructions timeBetweenQuestions={timeBetweenQuestions}/>
       </Modal>
       <Box pt={85} />
       <Header fixed={true} height={140} mt={70} p={0} style={{ zIndex: 9, maxHeight: 500, height: 555 }}>
         <Flex direction="column" p="sm">
           <Flex direction="row" align="center" justify="space-between" gap="lg">
-            {(operation !== 'startInterview') &&
-              <Flex style={{ width: "100%" }} direction="column">
-                <Progress
-                  value={(currectQuestion / questions.length) * 100}
-                  style={{ width: "100%", maxWidth: 300, height: 12, marginTop: 10, marginLeft: 10 }}
-                  size="sm"
-                />
-                <Text fz="sm" className={styles.quetion_bold} style={{ marginLeft: 10 }}>{`Question  : ${currectQuestion + 1} of ${questions.length}`}</Text>
-              </Flex>
+          {(operation !== 'startInterview') &&
+            <Flex style={{ width: "100%" }} direction="column">
+              <Progress
+                value={(currectQuestion / questions.length) * 100}
+                style={{ width: "100%", maxWidth: 300, height: 12, marginTop: 10, marginLeft: 10 }}
+                size="sm"
+              />
+              <Text fz="sm"  className={styles.quetion_bold} style={{ marginLeft: 10 }}>{`Question  : ${currectQuestion + 1} of ${questions.length}`}</Text>
+
+            </Flex>
             }
             {!isPreparing && (operation === 'startInterview') && <Button size="xs" className={styles.instructions_btn} onClick={() => setShowInstructions(true)} style={{ alignSelf: "flex-end" }}>
               Show Instructions
@@ -317,7 +328,7 @@ const VideoInterview_app = () => {
 
           <div className={styles.quetion_fsize}>{currectQuestion > -1 && itwQuestion?.question}</div>
 
-          <VideoController
+          <AudioController_new
             operation={operation}
             totalQuestions={questions.length}
             currectQuestion={currectQuestion}
@@ -327,23 +338,9 @@ const VideoInterview_app = () => {
             stopRecording={stopRecording}
             skipQuestion={skipQuestion}
             blob={audioBlob}
-            uploadAnswer={() => uploadVideo(audioBlob, countDownTimer, currectQuestion)}
+            uploadAnswer={() => uploadAudio(audioBlob, countDownTimer, currectQuestion)}
             play={play}
           />
-
-          {
-            recordingBlob && (
-              <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-                <video
-                  src={URL.createObjectURL(recordingBlob)}
-                  height={400}
-                  width={550}
-                  controls
-                  autoPlay
-                />
-              </div>
-            )
-          }
 
         </Flex>
       </Header>
@@ -369,9 +366,12 @@ const VideoInterview_app = () => {
             Requesting Permission for Audio, please click allow.
           </Alert>
         )}
+        {/* <div className={styles.quetion_fsize}>{currectQuestion > -1 && questions[currectQuestion].question}</div> */}
       </Container>
     </Box>
   );
 };
 
-export default VideoInterview_app;
+export default Interview_app;
+
+
