@@ -26,8 +26,13 @@ import { Resume } from "../../types/question_types";
 import styles from "../../styles/questionAdd.module.css";
 
 
-//http://localhost:3000/interview-app/shared-candidate/getVideoResults?token=5f9fe03a77254dabb6747aff76fdb5f4&interviewType=python01
-//http://localhost:3000/interview-app/shared-candidate/getVideoResults?token=37aa704e512145a9a9d8f709c9483222&interviewType=reactjs01_nodejs01
+
+// http://localhost:3000/interview-app/shared-candidate/getVideoResults?token=89a55bd70bed41d791581fe13e2809ec&interviewType=reactjs01_nodejs01
+
+// http://localhost:3000/interview-app/interview?token=89a55bd70bed41d791581fe13e2809ec&interviewType=rnative01
+
+// http://localhost:3000/interview-app/VideoInterview?token=89a55bd70bed41d791581fe13e2809ec&interviewType=rnative01
+
 
 const token1 = '';
 const par = '';
@@ -49,9 +54,9 @@ const GetVideoResults = () => {
         const results = await getInterviewResponses(candToken);
         setLoading(false);
         if (queryParams.get("type") == 'audio') {
-          results.data = results.data.slice(0, -2);
+          results.data = [];
         } else {
-          (results.data.length > 7) ? results.data = results.data.slice(0, 5) : (results.data.length === 6) ? results.data = results.data.slice(0, 4) : results.data = results.data.slice(0, 3)
+          results.data
         }
         setResults(results.data);
         console.log(results.data)
@@ -71,13 +76,21 @@ const GetVideoResults = () => {
 
   return (
     <Container>
-      {results.length > 0 && <h1>Video results</h1>}
+      {results.length > 0 && <h1>Results</h1>}
       <Container>
         {results.length > 0 ?
           <Card mt="xl" mb="xl" shadow="sm" radius="md" withBorder>
             {results.length > 0 &&
               results.map((response) => (
-                (response.questionId !== 21) && <VideoPrevResponse data={response} key={response.questionId} />
+                response.answerLocation === "/no-answer" ? (
+                  <div key={response.questionId}>
+                    <h4>{response.question}</h4>
+                  <strong>No answer given</strong>
+                    </div>
+                ): (
+
+                  (response.questionId !== 21) && <VideoPrevResponse data={response} key={response.questionId} />
+                )
               ))}
           </Card> :
           <div className={styles.int_text}>Candidate has not finished the interview assignment yet!</div>
