@@ -39,41 +39,7 @@ const Interview_app = () => {
   const [candidate, setCandidate] = useState<Candidatedata>({timeBetweenQuestions: 60} as Candidatedata);
   const [isPreparing, setIsPreparing] = useState(false);
 
-  const interviewMode = router.query.interviewMode;
-const Urlnavigator= "http://localhost:3004/interview-app/interview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode=VIDEO"
-
-const RedirectionToPage =()=>{
-  let lastparam = Urlnavigator.split('&')
-  let interviewparam = lastparam[lastparam.length -1]
-  let interviewEquiv = interviewparam.split('=')
-  let finalparam =interviewEquiv[interviewEquiv.length -1]
-  console.log(finalparam)
   
-  if(finalparam){
-    switch (finalparam){
-      case 'AUDIO':
-        router.push('/AudioTest'); // Redirect to another page
-        break
-  
-      case 'VIDEO':
-        router.push('/VideoTest'); // Redirect to another page
-        break
-  
-    
-      default:
-        router.push('/'); // Redirect to another page
-      break;
-    }
-  }
-}
-
- useEffect(() => {
- /*    if (interviewMode === 'Test') {
-      router.push('/AudioTest'); // Redirect to another page
-    }*/
-   RedirectionToPage()
-  }, [interviewMode, router]);
-
   useEffect(() => {
     const initialize = async () => {
       const stream = await navigator.mediaDevices.getUserMedia({
