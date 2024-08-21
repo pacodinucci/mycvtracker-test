@@ -27,11 +27,17 @@ import styles from "../../styles/questionAdd.module.css";
 
 
 
-// http://localhost:3000/interview-app/shared-candidate/getVideoResults?token=89a55bd70bed41d791581fe13e2809ec&interviewType=reactjs01_nodejs01
 
-// http://localhost:3000/interview-app/interview?token=89a55bd70bed41d791581fe13e2809ec&interviewType=rnative01
 
-// http://localhost:3000/interview-app/VideoInterview?token=89a55bd70bed41d791581fe13e2809ec&interviewType=rnative01
+
+// http://localhost:3000/interview-app/VideoInterview?token=42e0211beb7042f1a9cb9b219501d809&interviewType=reactjs01
+
+// http://localhost:3000/interview-app/shared-candidate/getVideoResults?token=42e0211beb7042f1a9cb9b219501d809&interviewType=reactjs01
+
+
+// http://localhost:3000/interview-app/shared-candidate/getVideoResults?token=fb66821a4f814557949a8529125b3752&interviewType=reactjs01
+
+// http://localhost:3000/interview-app/VideoInterview?token=fb66821a4f814557949a8529125b3752&interviewType=reactjs01
 
 
 const token1 = '';

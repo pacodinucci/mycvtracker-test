@@ -11,11 +11,9 @@ import AudioController_new from "../components/AudioController_new";
 import { useUserState } from "../hooks/useUserState";
 import { authRoutes } from "../data/route";
 
-
-
-
 type Operation = "startInterview" | "loading" | "recording" | "countdown" | "stopped";
 type play = "play_rec" | "stop_recording" | "uploading";
+
 const Interview_app = () => {
   const router = useRouter();
   const [token, setToken] = useState("");
@@ -36,12 +34,22 @@ const Interview_app = () => {
   const [candidate, setCandidate] = useState<Candidatedata>({timeBetweenQuestions: 60} as Candidatedata);
   const [isPreparing, setIsPreparing] = useState(false);
 
+  const firstQuestion = 0;
+  const lastQuestion = questions.length - 1;
+  const randomQuestion = useMemo(() => Math.floor(Math.random() * questions.length), [questions.length]);
+
   useEffect(() => {
     const initialize = async () => {
-      const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-          video: true
-        });
+
+      console.log("Current Question:", currectQuestion);
+    console.log("First Question:", firstQuestion);
+    console.log("Last Question:", lastQuestion);
+    console.log("Random Question:", randomQuestion);
+      const isSpecialQuestion = currectQuestion === firstQuestion || currectQuestion === lastQuestion || currectQuestion === randomQuestion;
+      console.log("Is special question:", isSpecialQuestion)
+      const stream = await navigator.mediaDevices.getUserMedia(
+        isSpecialQuestion ? {  video: true } : { audio: true }
+      );
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorder.addEventListener("dataavailable", (event) => {
         console.log(event);
@@ -51,7 +59,7 @@ const Interview_app = () => {
     };
   
     initialize();
-
+  
     if (user === null && !isLoadingUser) {
       document.addEventListener('contextmenu', event => {
         event.preventDefault();
@@ -71,7 +79,7 @@ const Interview_app = () => {
     }
   }
 };
-}, [user, isLoadingUser]);
+}, [user, isLoadingUser, currectQuestion, firstQuestion, lastQuestion, randomQuestion]);
 
   useEffect(() => {
     const prepareInterview = async () => {
@@ -111,11 +119,27 @@ const Interview_app = () => {
 
   // TODO: Enable before deployment
   useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({ audio: true, video: true })
-      .then(() => setHasPermission(true))
-      .catch(() => setHasPermission(false));
-  }, []);
+    const initializeMedia = async () => {
+      try {
+        const isSpecialQuestion = currectQuestion === firstQuestion || currectQuestion === lastQuestion || currectQuestion === randomQuestion;
+        const constraints = isSpecialQuestion ? { audio: true, video: true } : { audio: true };
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        console.log("getUserMedia call was successful");
+        setHasPermission(true);
+        const mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.addEventListener("dataavailable", (event) => {
+          console.log(event);
+          setAudioBlob(event.data);
+        });
+        setRecorder(mediaRecorder);
+      } catch (error) {
+        console.error("Error in getUserMedia call:", error);
+        setHasPermission(false);
+      }
+    };
+  
+    initializeMedia();
+  }, [currectQuestion, firstQuestion, lastQuestion, randomQuestion]);
 
   const startCountdown = useCallback(() => {
     setCountDownTimer(10);
@@ -143,7 +167,7 @@ const Interview_app = () => {
     }
   }, [candidate, recorder]);
 
-  const uploadVideo = useCallback(
+  const uploadData = useCallback(
     async (data: Blob | null, duration: number, question: number) => {
       if (data === null) return;
       if (questions.length === 0 || question === -1) return;
@@ -151,7 +175,7 @@ const Interview_app = () => {
         const url = URL.createObjectURL(data);
         console.log(url);
         const fd = new FormData();
-        fd.append("file", data, `${new Date().toISOString()}.mov`);
+        fd.append("file", data, `${new Date().toISOString()}.${currectQuestion === firstQuestion || currectQuestion === lastQuestion || currectQuestion === randomQuestion ? 'mov' : 'wav'}`);
         fd.set("Candidate", token);
         fd.set("questionId", questions[question].id.toString());
         fd.set("attemptTime", duration.toString());
@@ -167,7 +191,7 @@ const Interview_app = () => {
         setIsUploading(false);
       }
     },
-    [token, questions, startCountdown]
+    [token, questions, startCountdown, currectQuestion, firstQuestion, lastQuestion, randomQuestion]
   );
 
   const stopRecording = useCallback(() => {
@@ -179,48 +203,10 @@ const Interview_app = () => {
       return null;
     });
     // Assuming you have the video data in `videoBlob`
-    uploadVideo(audioBlob, countDownTimer, currectQuestion);
-  }, [recorder, uploadVideo, audioBlob, countDownTimer, currectQuestion]);
+    uploadData(audioBlob, countDownTimer, currectQuestion);
+  }, [recorder, uploadData, audioBlob, countDownTimer, currectQuestion]);
 
-  const uploadAudio = useCallback(
-    async (data: Blob | null, duration: number, question: number) => {
-     // skipQuestion();
-    //  setOperation("countdown");
-    //  startCountdown();
-    setPlay("uploading");
-    // if (recorder) recorder.stop();
-
-    // setOperation("recording");
-    // //setOperation("stopped");
-    // setCountdownInterval((prev) => {
-    //   if (prev !== null) clearInterval(prev);
-    //   return null;
-    // });
-
-      if (data === null) return;
-      if (questions.length === 0 || question === -1) return;
-      try {
-        const url = URL.createObjectURL(data);
-        console.log(url);
-        const fd = new FormData();
-        fd.append("file", data, new Date().toISOString());
-        fd.set("Candidate", token);
-        fd.set("questionId", questions[question].id.toString());
-        fd.set("attemptTime", duration.toString());
-        setIsUploading(true);
-        const response = await submitAnswer(fd);
-        setAudioBlob(null);
-        setOperation("countdown");
-        startCountdown();
-        setCurrentQuestion((prev) => prev + 1);
-      } catch (e) {
-        console.log("error");
-      } finally {
-        setIsUploading(false);
-      }
-    },
-    [token, questions, startCountdown]
-  );
+  
 
   
 
@@ -237,7 +223,6 @@ const Interview_app = () => {
       if (operation === "countdown") {
         startRecording();
       } else if (operation === "recording") {
-        // stop recording
         stopRecording();
       }
     }
@@ -245,10 +230,8 @@ const Interview_app = () => {
 
   const getQuestions = useCallback(
     async (token: string, types: string[]) => {
-
       try {
-        const audioQuestions : Question[] = await getMyQuestions(token, types.join("_"));
-
+        const audioQuestions: Question[] = await getMyQuestions(token, types.join("_"));
         if (audioQuestions) {
           const currentQuesIdx = audioQuestions.findIndex(question => !question.answered);
           startInterview(currentQuesIdx !== -1 ? currentQuesIdx : audioQuestions.length);
@@ -258,9 +241,8 @@ const Interview_app = () => {
         setToken("");
         console.log(e);
       }
-
     },
-    [startInterview]
+    []
   );
 
   const handleStartInterview = useCallback(
@@ -338,7 +320,7 @@ const Interview_app = () => {
             stopRecording={stopRecording}
             skipQuestion={skipQuestion}
             blob={audioBlob}
-            uploadAnswer={() => uploadAudio(audioBlob, countDownTimer, currectQuestion)}
+            uploadAnswer={() => uploadData(audioBlob, countDownTimer, currectQuestion)}
             play={play}
           />
 
