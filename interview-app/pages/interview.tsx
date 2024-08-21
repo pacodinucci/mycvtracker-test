@@ -40,7 +40,7 @@ const Interview_app = () => {
   const [isPreparing, setIsPreparing] = useState(false);
 
   const interviewMode = router.query.interviewMode;
-const Urlnavigator= "http://localhost:3004/interview-app/interview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode=AUDIO"
+const Urlnavigator= "http://localhost:3004/interview-app/interview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode=VIDEO"
 
 const RedirectionToPage =()=>{
   let lastparam = Urlnavigator.split('&')
@@ -49,20 +49,24 @@ const RedirectionToPage =()=>{
   let finalparam =interviewEquiv[interviewEquiv.length -1]
   console.log(finalparam)
   
-  switch (finalparam) {
-    case 'AUDIO':
-      router.push('/AudioTest'); // Redirect to the AudioTest page
-      break; // Stop execution
+  if(finalparam){
+    switch (finalparam){
+      case 'AUDIO':
+        router.push('/AudioTest'); // Redirect to another page
+        break
   
-    case 'VIDEO':
-      router.push('/VideoTest'); // Redirect to the VideoTest page
-      break; // Stop execution
+      case 'VIDEO':
+        router.push('/VideoTest'); // Redirect to another page
+        break
   
-    default:
-      router.push('/'); // Redirect to the home page
-      break; // Stop execution
+    
+      default:
+        router.push('/'); // Redirect to another page
+      break;
+    }
   }
-  
+}
+
  useEffect(() => {
  /*    if (interviewMode === 'Test') {
       router.push('/AudioTest'); // Redirect to another page
@@ -378,7 +382,7 @@ const RedirectionToPage =()=>{
     </div>
 
   );
-};}
+};
 
 export default Interview_app;
 
