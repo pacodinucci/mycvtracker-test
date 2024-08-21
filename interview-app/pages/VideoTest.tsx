@@ -15,8 +15,7 @@ const VideoTest = () => {
      const baseUrl = "http://localhost:3001/interview-app/interview";
    // const token ="4a979b61bfc749a7bb5a65eafc2aff65"
    //const token ="a7873dbcc4b2432daf47e63440316d68"
-    const interviewType = "reactjs01_nodejs01"; // You might want to get this dynamically as well if needed
-
+    const interviewType = "reactjs01_nodejs01"; // You might want to get this dynamically as well if neede
 
     // Construct the URL with the dynamic token
     const fullUrl = `${baseUrl}?token=${token}&interviewType=${interviewType}`;
@@ -59,7 +58,7 @@ const VideoTest = () => {
                 <h1>Hi</h1>
                 <h1>Test your audio before you start your interview</h1>
                 
-                <button id='btn' className={Styles.startRecording}>Before you start Test your audio</button>
+                <button id='btn' className={Styles.startRecording}>Before you start Test your Video</button>
 
 
             </div>

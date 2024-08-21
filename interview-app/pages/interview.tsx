@@ -40,11 +40,34 @@ const Interview_app = () => {
   const [isPreparing, setIsPreparing] = useState(false);
 
   const interviewMode = router.query.interviewMode;
+const Urlnavigator= "http://localhost:3004/interview-app/interview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode=AUDIO"
 
-  useEffect(() => {
-    if (interviewMode === 'AudioTest') {
+const RedirectionToPage =()=>{
+  let lastparam = Urlnavigator.split('&')
+  let interviewparam = lastparam[lastparam.length -1]
+  let interviewEquiv = interviewparam.split('=')
+  let finalparam =interviewEquiv[interviewEquiv.length -1]
+  console.log(finalparam)
+  
+  switch (finalparam) {
+    case 'AUDIO':
+      router.push('/AudioTest'); // Redirect to the AudioTest page
+      break; // Stop execution
+  
+    case 'VIDEO':
+      router.push('/VideoTest'); // Redirect to the VideoTest page
+      break; // Stop execution
+  
+    default:
+      router.push('/'); // Redirect to the home page
+      break; // Stop execution
+  }
+  
+ useEffect(() => {
+ /*    if (interviewMode === 'Test') {
       router.push('/AudioTest'); // Redirect to another page
-    }
+    }*/
+   RedirectionToPage()
   }, [interviewMode, router]);
 
   useEffect(() => {
@@ -282,9 +305,6 @@ const Interview_app = () => {
 
   return (
     <div>
-      {interviewMode === 'AudioTest' ? (
-        <AudioTest/> // Render alternate component
-      ) : (
         <Box>
         <LoadingOverlay visible={isPreparing} zIndex={99999}/>
        <Modal opened={showInstructions && !isPreparing} onClose={() => setShowInstructions(false)} size="xl">
@@ -354,14 +374,14 @@ const Interview_app = () => {
          {/* <div className={styles.quetion_fsize}>{currectQuestion > -1 && questions[currectQuestion].question}</div> */}
        </Container>
      </Box>
-      )}
+      
     </div>
 
   );
-};
+};}
 
 export default Interview_app;
 
 //http://localhost:3000/interview-app/shared-candidate/getVideoResults?token=37aa704e512145a9a9d8f709c9483222&interviewType=reactjs01_nodejs01
 
-//http://localhost:3001/interview-app/interview?token=37aa704e512145a9a9d8f709c9483222&interviewType=reactjs01_nodejs01&interviewMode=AudioTest
+//http://localhost:3001/interview-app/interview?token=37aa704e512145a9a9d8f709c9483222&interviewType=reactjs01_nodejs01&interviewMode=Test

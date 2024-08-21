@@ -5,9 +5,9 @@
 }
 
 .interviewbtn{
-    background-color:violet;
-    border-radius:25px;
-    padding:34px;
+    background-color:lightblue;
+    border-radius:10px;
+    padding:24px;
     color:white;
     border:none;
     font-weight:bold
@@ -60,4 +60,44 @@
 .videoSize{
     width: 500px;
     height: 380px,
+}
+
+
+
+.start_int_svg {
+  -webkit-box-align: center;
+  align-items: center;
+  border: none;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 30px 0px;
+  cursor: pointer;
+  background: rgb(125, 0, 254);
+  color: rgb(255, 255, 255);
+  display: flex;
+  font-weight: 700;
+  -webkit-box-pack: center;
+  justify-content: center;
+  outline: none;
+  pointer-events: initial;
+  transform: perspective(1000px) translateZ(0px);
+  transition: all 0.1s ease-in-out 0s;
+  border-radius: 16px;
+  flex-direction: row;
+  width: 100%;
+  max-width: 285px;
+  height: 60px;
+  font-size: 18px;
+  line-height: 24px;
+  text-transform: none;
+  letter-spacing: initial;
+  text-align: center;
+  margin: 0px;
+  margin-top: 34px;
+  margin-left:490px
+}
+
+
+.start_int_svg svg {
+  fill: white;
+  height: 24px;
+ /* margin-bottom: 11px; */
 }

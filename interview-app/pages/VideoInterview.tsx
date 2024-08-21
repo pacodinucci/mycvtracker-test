@@ -77,13 +77,7 @@ const VideoInterview_app = () => {
       };
   const interviewMode = router.query.interviewMode;
 
-  useEffect(() => {
-    if (interviewMode === 'AudioTest') {
-      router.push('/VideoTest'); // Redirect to another page
-    }
-  }, [interviewMode, router]);
 
-    
       recorder.onstop = () => { 
         // onstop event of media recorder  
         const blob = new Blob(recordingChunks, { type: 'video/webm' });
@@ -325,10 +319,7 @@ const VideoInterview_app = () => {
 
   return (
     <>
-       <h1>Video Interview</h1>
-      {interviewMode === 'AudioTest' ? (
-        <VideoTest/> // Render alternate component
-      ) : ( 
+    
         <Box>
         <LoadingOverlay visible={isPreparing} zIndex={99999} />
         <Modal opened={showInstructions && !isPreparing} onClose={() => setShowInstructions(false)} size="xl">
@@ -417,7 +408,7 @@ const VideoInterview_app = () => {
         </Container>
       </Box>
     
-      )}
+     
        
     </>
   );

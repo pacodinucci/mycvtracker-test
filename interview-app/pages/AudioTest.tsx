@@ -4,6 +4,7 @@ import Styles from '../styles/Audio.module.css';
 import AudioTestBtn from '../components/AudioPreviewTester';
 import { useRouter } from 'next/router';
 import { useUserState } from '../hooks/useUserState';
+import styles from "../styles/questionAdd.module.css";
 
 const AudioTest = () => {
  
@@ -41,7 +42,7 @@ const AudioTest = () => {
       <div id='TestAudioSection' className={Styles.audioSection}>
         <h1>Hi</h1>
         <h1>Test your audio before you start your interview</h1>
-        <button onClick={GiveAudio} className={Styles.interviewbtn}>Start Interview</button>
+        <button onClick={GiveAudio} className={Styles.start_int_svg}>Test your Audio</button>
       </div>
     </>
   );
