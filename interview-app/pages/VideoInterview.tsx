@@ -1,8 +1,23 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { Alert, Button, Container, Header, Box, Modal, Flex, Title, Progress, Text, LoadingOverlay } from "@mantine/core";
+import {
+  Alert,
+  Button,
+  Container,
+  Header,
+  Box,
+  Modal,
+  Flex,
+  Title,
+  Progress,
+  Text,
+  LoadingOverlay,
+} from "@mantine/core";
 import { useRouter } from "next/router";
 import AudioController from "../components/AudioController";
-import { getCandidateDetails, getMyQuestions } from "../apis/mycvtracker/questions";
+import {
+  getCandidateDetails,
+  getMyQuestions,
+} from "../apis/mycvtracker/questions";
 import { Candidatedata, Question } from "../types/question_types";
 import Instructions from "../components/Instructions";
 import { submitAnswer } from "../apis/mycvtracker/submit_interview";
@@ -11,7 +26,12 @@ import AudioController_new from "../components/AudioController_new";
 import { useUserState } from "../hooks/useUserState";
 import { authRoutes } from "../data/route";
 
-type Operation = "startInterview" | "loading" | "recording" | "countdown" | "stopped";
+type Operation =
+  | "startInterview"
+  | "loading"
+  | "recording"
+  | "countdown"
+  | "stopped";
 type play = "play_rec" | "stop_recording" | "uploading";
 
 const Interview_app = () => {
@@ -20,10 +40,10 @@ const Interview_app = () => {
   const [types, setTypes] = useState<string[]>([]);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [demoquestions, setDemoQuestions] = useState<Question[]>([]);
   const [currectQuestion, setCurrentQuestion] = useState(-1);
   const [countDownTimer, setCountDownTimer] = useState(5);
-  const [countdownInterval, setCountdownInterval] = useState<NodeJS.Timer | null>(null);
+  const [countdownInterval, setCountdownInterval] =
+    useState<NodeJS.Timer | null>(null);
   const [operation, setOperation] = useState<Operation>("startInterview");
   const [showInstructions, setShowInstructions] = useState(false);
   const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
@@ -31,98 +51,61 @@ const Interview_app = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [play, setPlay] = useState<play>("play_rec");
   const { user, isLoading: isLoadingUser } = useUserState();
-  const [candidate, setCandidate] = useState<Candidatedata>({timeBetweenQuestions: 60} as Candidatedata);
+  const [candidate, setCandidate] = useState<Candidatedata>({
+    timeBetweenQuestions: 60,
+  } as Candidatedata);
   const [isPreparing, setIsPreparing] = useState(false);
 
   const firstQuestion = 0;
   const lastQuestion = questions.length - 1;
-  const randomQuestion = useMemo(() => Math.floor(Math.random() * questions.length), [questions.length]);
+  const randomQuestion = useMemo(
+    () => Math.floor(Math.random() * questions.length),
+    [questions.length]
+  );
 
   useEffect(() => {
     const initialize = async () => {
-
       console.log("Current Question:", currectQuestion);
-    console.log("First Question:", firstQuestion);
-    console.log("Last Question:", lastQuestion);
-    console.log("Random Question:", randomQuestion);
-      const isSpecialQuestion = currectQuestion === firstQuestion || currectQuestion === lastQuestion || currectQuestion === randomQuestion;
-      console.log("Is special question:", isSpecialQuestion)
-      const stream = await navigator.mediaDevices.getUserMedia(
-        isSpecialQuestion ? {  video: true } : { audio: true }
-      );
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorder.addEventListener("dataavailable", (event) => {
-        console.log(event);
-        setAudioBlob(event.data);
-      });
-      setRecorder(mediaRecorder);
-    };
-  
-    initialize();
-  
-    if (user === null && !isLoadingUser) {
-      document.addEventListener('contextmenu', event => {
-        event.preventDefault();
-    });
+      console.log("First Question:", firstQuestion);
+      console.log("Last Question:", lastQuestion);
+      console.log("Random Question:", randomQuestion);
+      if (router.query.token && !Array.isArray(router.query.token)) {
+        setIsPreparing(true);
+        const candToken = router.query.token;
+        setToken(candToken);
+        router.replace(router.asPath, router.route, { shallow: true });
 
-  document.onkeydown = function(e) {
-    if (e.ctrlKey &&
-        (e.keyCode === 67 ||
-         e.keyCode === 86 ||
-         e.keyCode === 85 ||
-         e.keyCode === 16 ||
-         e.keyCode === 73 ||
-         e.keyCode === 117)) {
-        return false;
-    } else {
-        return true;
-    }
-  }
-};
-}, [user, isLoadingUser, currectQuestion, firstQuestion, lastQuestion, randomQuestion]);
-
-  useEffect(() => {
-    const prepareInterview = async () => {
-      if (router.query.token) {
-        if (!Array.isArray(router.query.token)) {
-
-          setIsPreparing(true)
-          const candToken = router.query.token;
-          setToken(candToken);
-          router.replace(router.asPath, router.route, { shallow: true });
-          try {
-
-            const response = await getCandidateDetails("", candToken);
-            setCandidate(response)
-          } catch (e: any) {
-            console.log(e);
-          } finally {
-            setIsPreparing(false)
-            setTimeout(() => {
-              setShowInstructions(true)
-            }, 100);
-          }
+        try {
+          const response = await getCandidateDetails("", candToken);
+          setCandidate(response);
+        } catch (e: any) {
+          console.log(e);
+        } finally {
+          setIsPreparing(false);
+          setTimeout(() => {
+            setShowInstructions(true);
+          }, 100);
         }
       }
 
       if (router.query.interviewType) {
-        console.log(router.query.interviewType);
-        setTypes(Array.isArray(router.query.interviewType) ? router.query.interviewType : [router.query.interviewType]);
+        setTypes(
+          Array.isArray(router.query.interviewType)
+            ? router.query.interviewType
+            : [router.query.interviewType]
+        );
       }
-    }
+    };
 
-    prepareInterview()
-
-
-  }, [router]);
-
-
-  // TODO: Enable before deployment
-  useEffect(() => {
     const initializeMedia = async () => {
       try {
-        const isSpecialQuestion = currectQuestion === firstQuestion || currectQuestion === lastQuestion || currectQuestion === randomQuestion;
-        const constraints = isSpecialQuestion ? { audio: true, video: true } : { audio: true };
+        const isSpecialQuestion =
+          currectQuestion === firstQuestion ||
+          currectQuestion === lastQuestion ||
+          currectQuestion === randomQuestion;
+        const constraints = isSpecialQuestion
+          ? { audio: true, video: true }
+          : { audio: true };
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
         console.log("getUserMedia call was successful");
         setHasPermission(true);
@@ -137,9 +120,40 @@ const Interview_app = () => {
         setHasPermission(false);
       }
     };
-  
+
+    initialize();
     initializeMedia();
-  }, [currectQuestion, firstQuestion, lastQuestion, randomQuestion]);
+
+    if (user === null && !isLoadingUser) {
+      document.addEventListener("contextmenu", (event) => {
+        event.preventDefault();
+      });
+
+      document.onkeydown = function (e) {
+        if (
+          e.ctrlKey &&
+          (e.keyCode === 67 ||
+            e.keyCode === 86 ||
+            e.keyCode === 85 ||
+            e.keyCode === 16 ||
+            e.keyCode === 73 ||
+            e.keyCode === 117)
+        ) {
+          return false;
+        } else {
+          return true;
+        }
+      };
+    }
+  }, [
+    user,
+    isLoadingUser,
+    currectQuestion,
+    firstQuestion,
+    lastQuestion,
+    randomQuestion,
+    router,
+  ]);
 
   const startCountdown = useCallback(() => {
     setCountDownTimer(10);
@@ -153,10 +167,8 @@ const Interview_app = () => {
     setOperation("countdown");
   }, []);
 
-
-
   const startRecording = useCallback(() => {
-    const {timeBetweenQuestions} = candidate
+    const { timeBetweenQuestions } = candidate;
     setOperation("recording");
     setPlay("play_rec");
     setCountDownTimer(timeBetweenQuestions);
@@ -175,7 +187,17 @@ const Interview_app = () => {
         const url = URL.createObjectURL(data);
         console.log(url);
         const fd = new FormData();
-        fd.append("file", data, `${new Date().toISOString()}.${currectQuestion === firstQuestion || currectQuestion === lastQuestion || currectQuestion === randomQuestion ? 'mov' : 'wav'}`);
+        fd.append(
+          "file",
+          data,
+          `${new Date().toISOString()}.${
+            currectQuestion === firstQuestion ||
+            currectQuestion === lastQuestion ||
+            currectQuestion === randomQuestion
+              ? "mov"
+              : "wav"
+          }`
+        );
         fd.set("Candidate", token);
         fd.set("questionId", questions[question].id.toString());
         fd.set("attemptTime", duration.toString());
@@ -191,7 +213,15 @@ const Interview_app = () => {
         setIsUploading(false);
       }
     },
-    [token, questions, startCountdown, currectQuestion, firstQuestion, lastQuestion, randomQuestion]
+    [
+      token,
+      questions,
+      startCountdown,
+      currectQuestion,
+      firstQuestion,
+      lastQuestion,
+      randomQuestion,
+    ]
   );
 
   const stopRecording = useCallback(() => {
@@ -202,13 +232,8 @@ const Interview_app = () => {
       if (prev !== null) clearInterval(prev);
       return null;
     });
-    // Assuming you have the video data in `videoBlob`
     uploadData(audioBlob, countDownTimer, currectQuestion);
   }, [recorder, uploadData, audioBlob, countDownTimer, currectQuestion]);
-
-  
-
-  
 
   const startInterview = useCallback(
     (startfrom: number) => {
@@ -228,22 +253,26 @@ const Interview_app = () => {
     }
   }, [countDownTimer, startRecording, operation, stopRecording]);
 
-  const getQuestions = useCallback(
-    async (token: string, types: string[]) => {
-      try {
-        const audioQuestions: Question[] = await getMyQuestions(token, types.join("_"));
-        if (audioQuestions) {
-          const currentQuesIdx = audioQuestions.findIndex(question => !question.answered);
-          startInterview(currentQuesIdx !== -1 ? currentQuesIdx : audioQuestions.length);
-          setQuestions(audioQuestions);
-        }
-      } catch (e: any) {
-        setToken("");
-        console.log(e);
+  const getQuestions = useCallback(async (token: string, types: string[]) => {
+    try {
+      const audioQuestions: Question[] = await getMyQuestions(
+        token,
+        types.join("_")
+      );
+      if (audioQuestions) {
+        const currentQuesIdx = audioQuestions.findIndex(
+          (question) => !question.answered
+        );
+        startInterview(
+          currentQuesIdx !== -1 ? currentQuesIdx : audioQuestions.length
+        );
+        setQuestions(audioQuestions);
       }
-    },
-    []
-  );
+    } catch (e: any) {
+      setToken("");
+      console.log(e);
+    }
+  }, []);
 
   const handleStartInterview = useCallback(
     (token: string, types: string[]) => {
@@ -278,37 +307,67 @@ const Interview_app = () => {
       </Container>
     );
   }
-  const {timeBetweenQuestions} = candidate
-  const itwQuestion = questions[currectQuestion]
+
+  const { timeBetweenQuestions } = candidate;
+  const itwQuestion = questions[currectQuestion];
 
   return (
     <Box>
-       <LoadingOverlay visible={isPreparing} zIndex={99999}/>
-      <Modal opened={showInstructions && !isPreparing} onClose={() => setShowInstructions(false)} size="xl">
-        <Instructions timeBetweenQuestions={timeBetweenQuestions}/>
+      <LoadingOverlay visible={isPreparing} zIndex={99999} />
+      <Modal
+        opened={showInstructions && !isPreparing}
+        onClose={() => setShowInstructions(false)}
+        size="xl"
+      >
+        <Instructions timeBetweenQuestions={timeBetweenQuestions} />
       </Modal>
       <Box pt={85} />
-      <Header fixed={true} height={140} mt={70} p={0} style={{ zIndex: 9, maxHeight: 500, height: 555 }}>
+      <Header
+        fixed={true}
+        height={140}
+        mt={70}
+        p={0}
+        style={{ zIndex: 9, maxHeight: 500, height: 555 }}
+      >
         <Flex direction="column" p="sm">
           <Flex direction="row" align="center" justify="space-between" gap="lg">
-          {(operation !== 'startInterview') &&
-            <Flex style={{ width: "100%" }} direction="column">
-              <Progress
-                value={(currectQuestion / questions.length) * 100}
-                style={{ width: "100%", maxWidth: 300, height: 12, marginTop: 10, marginLeft: 10 }}
-                size="sm"
-              />
-              <Text fz="sm"  className={styles.quetion_bold} style={{ marginLeft: 10 }}>{`Question  : ${currectQuestion + 1} of ${questions.length}`}</Text>
-
-            </Flex>
-            }
-            {!isPreparing && (operation === 'startInterview') && <Button size="xs" className={styles.instructions_btn} onClick={() => setShowInstructions(true)} style={{ alignSelf: "flex-end" }}>
-              Show Instructions
-            </Button>
-            }
+            {operation !== "startInterview" && (
+              <Flex style={{ width: "100%" }} direction="column">
+                <Progress
+                  value={(currectQuestion / questions.length) * 100}
+                  style={{
+                    width: "100%",
+                    maxWidth: 300,
+                    height: 12,
+                    marginTop: 10,
+                    marginLeft: 10,
+                  }}
+                  size="sm"
+                />
+                <Text
+                  fz="sm"
+                  className={styles.quetion_bold}
+                  style={{ marginLeft: 10 }}
+                >{`Question  : ${currectQuestion + 1} of ${
+                  questions.length
+                }`}</Text>
+              </Flex>
+            )}
+            {!isPreparing && operation === "startInterview" && (
+              <Button
+                size="xs"
+                className={styles.instructions_btn}
+                onClick={() => setShowInstructions(true)}
+                style={{ alignSelf: "flex-end" }}
+              >
+                Show Instructions
+              </Button>
+            )}
           </Flex>
 
-          <div className={styles.quetion_fsize}>{currectQuestion > -1 && itwQuestion?.question}</div>
+          <div className={styles.quetion_fsize}>
+            {currectQuestion > -1 && itwQuestion?.question}
+          </div>
 
           <AudioController_new
             operation={operation}
@@ -320,10 +379,11 @@ const Interview_app = () => {
             stopRecording={stopRecording}
             skipQuestion={skipQuestion}
             blob={audioBlob}
-            uploadAnswer={() => uploadData(audioBlob, countDownTimer, currectQuestion)}
+            uploadAnswer={() =>
+              uploadData(audioBlob, countDownTimer, currectQuestion)
+            }
             play={play}
           />
-
         </Flex>
       </Header>
       <Container style={{ marginTop: 50 }}>
@@ -337,7 +397,6 @@ const Interview_app = () => {
             No Interview types detected. Please check the link.
           </Alert>
         )}
-
         {hasPermission === false && (
           <Alert title="No Permission" color="red">
             Please provide permissions for audio
@@ -348,12 +407,9 @@ const Interview_app = () => {
             Requesting Permission for Audio, please click allow.
           </Alert>
         )}
-        {/* <div className={styles.quetion_fsize}>{currectQuestion > -1 && questions[currectQuestion].question}</div> */}
       </Container>
     </Box>
   );
 };
 
 export default Interview_app;
-
-
