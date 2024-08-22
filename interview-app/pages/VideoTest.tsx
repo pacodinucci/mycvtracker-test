@@ -32,7 +32,7 @@ const VideoTest = () => {
                 const root = createRoot(TestAudioSectionPreview);
                 root.render(
                 
-< VideoTestBtn  Url={fullUrl}/>
+< VideoTestBtn  />
                         );
             }
         };

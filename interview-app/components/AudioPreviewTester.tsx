@@ -7,7 +7,7 @@ type Props = {
   Url: string;
 };
 
-const AudioPreviewTester: React.FC<Props> = ({ Url }) => {
+const AudioPreviewTester = () => {
   //const router = useRouter();
   //const interviewMode = router.query.interviewMode;
   const interviewMode =false ;
@@ -38,8 +38,9 @@ const AudioPreviewTester: React.FC<Props> = ({ Url }) => {
             className={Styles.audioplayer}
           />
         )}
-        <button><a href={Url} target="_blank" rel="noopener noreferrer">Proceed to interview</a></button>
-      </div>
+      <button >
+       <a href='#' target="_blank" rel="noopener noreferrer" className={Styles.linkText}>Proceed to interview</a>
+      </button>       </div>
     </>
   );
 };

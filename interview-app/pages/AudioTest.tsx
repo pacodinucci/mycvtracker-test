@@ -31,7 +31,7 @@ const AudioTest = () => {
       const root = createRoot(TestAudioSectionPreview);
       root.render(
         <div>
-          <AudioTestBtn Url={fullUrl} />
+          <AudioTestBtn  />
         </div>
       );
     }

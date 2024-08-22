@@ -1,7 +1,8 @@
 .audioSection{
     text-align:Center;
     background-color:white;
-    padding:100px
+    height:390px;
+    padding:90px
 }
 
 .interviewbtn{
@@ -92,7 +93,7 @@
   text-align: center;
   margin: 0px;
   margin-top: 34px;
-  margin-left:490px
+  margin-left:500px
 }
 
 
@@ -101,3 +102,18 @@
   height: 24px;
  /* margin-bottom: 11px; */
 }
+
+.error_message {
+  font-size:55px;
+  padding:50px;
+  font-weight:900
+}
+
+.error_message h1{
+  text-align:center
+}
+.error_message p{
+  text-align:center;
+  margin-left:10px
+}
+

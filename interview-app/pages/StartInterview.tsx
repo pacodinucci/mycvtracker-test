@@ -40,7 +40,13 @@ const StartInterview = () => {
   const [isPreparing, setIsPreparing] = useState(false);
 
   const interviewMode = router.query.interviewMode;
-const Urlnavigator= "http://localhost:3004/interview-app/StartInterview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode=MCQ"
+const Urlnavigator= "http://localhost:3000/interview-app/StartInterview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode="
+
+const MissingParam =()=>{
+  
+}
+
+
 
 const RedirectionToPage =()=>{
   let lastparam = Urlnavigator.split('&')
@@ -61,11 +67,14 @@ const RedirectionToPage =()=>{
       case 'MCQ':
         router.push('/_mcq'); // Redirect to another page
         break
-    
+  
+      break
       default:
         router.push('/'); // Redirect to another page
       break;
     }
+  } else{
+      router.push('/ErrorPage'); // Redirect to another page
   }
 }
 
