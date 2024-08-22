@@ -58,10 +58,13 @@ const Interview_app = () => {
 
   const firstQuestion = 0;
   const lastQuestion = questions.length - 1;
-  const randomQuestion = useMemo(
-    () => Math.floor(Math.random() * questions.length),
-    [questions.length]
-  );
+  const randomQuestion = useMemo(() => {
+    let randomIndex;
+    do {
+      randomIndex = Math.floor(Math.random() * questions.length);
+    } while (randomIndex === 0 || randomIndex === questions.length - 1);
+    return randomIndex;
+  }, [questions.length]);
 
   useEffect(() => {
     const initialize = async () => {

@@ -1,10 +1,29 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
-import { ActionIcon, Button, Flex, Paper, SimpleGrid, Slider, Text, Title, Alert } from "@mantine/core";
+import {
+  ActionIcon,
+  Button,
+  Flex,
+  Paper,
+  SimpleGrid,
+  Slider,
+  Text,
+  Title,
+  Alert,
+} from "@mantine/core";
 import { AudioResponse } from "../types/audioResponse_types";
 import ReactHowler from "react-howler";
-import ReactPlayer from 'react-player';
+import ReactPlayer from "react-player";
 
-import { FaPlay, FaPause, FaStop, FaVolumeOff, FaVolumeMute, FaVolumeUp, FaVolumeDown, FaRedo } from "react-icons/fa";
+import {
+  FaPlay,
+  FaPause,
+  FaStop,
+  FaVolumeOff,
+  FaVolumeMute,
+  FaVolumeUp,
+  FaVolumeDown,
+  FaRedo,
+} from "react-icons/fa";
 
 type Props = {
   data?: AudioResponse;
@@ -30,6 +49,7 @@ const VideoPrevResponse = ({ data, source, compact, style }: Props) => {
   const [mute, setMute] = useState(false);
   const [error, setError] = useState("");
   const [url, setUrl] = useState("");
+  const [isVideo, setIsVideo] = useState<boolean>(false);
 
   const handleChangeVolume = useCallback((value: number) => {
     setMute(false);
@@ -89,11 +109,10 @@ const VideoPrevResponse = ({ data, source, compact, style }: Props) => {
     }
   }, [player]);
 
-
   useEffect(() => {
     const fetchVideo = async () => {
       try {
-        const url = data 
+        const url = data
           ? `${process.env.NEXT_PUBLIC_MYCVTRACKER_API_HOST}/interviews/audioData/${data.token}/${data.questionId}`
           : source || "";
 
@@ -102,8 +121,17 @@ const VideoPrevResponse = ({ data, source, compact, style }: Props) => {
 
         const blob = await response.blob();
 
+        console.log(blob);
+
         // Convert Blob into a URL object
-        const videoUrl = URL.createObjectURL(new Blob([blob], { type: 'video/webm' }));
+        const videoUrl = URL.createObjectURL(
+          new Blob([blob], { type: "video/webm" })
+        );
+
+        if (data?.answerLocation.endsWith(".mov")) {
+          setIsVideo(true);
+        }
+
         setUrl(videoUrl);
         setIsLoading(false);
       } catch (err) {
@@ -117,24 +145,10 @@ const VideoPrevResponse = ({ data, source, compact, style }: Props) => {
 
   return (
     <Paper p={compact ? "sm" : "md"} my={compact ? "sm" : "md"} style={style}>
-      <Text fz="sm" style={{ marginTop: 16}}>
+      <Text fz="sm" style={{ marginTop: 16, marginBottom: 8 }}>
         {data && <Title order={6}>{data.question}</Title>}
-        {isLoading ? "Loading..." : `Duration: ${seek.toFixed(2)}/${duration.toFixed(2)}`}
       </Text>
-      <Flex align="center">
-        <Slider
-          onChange={handleSeek}
-          label={(value) => value.toFixed(1)}
-          step={0.1}
-          style={{ width: "100%" }}
-          max={duration}
-          value={seek}
-          disabled={isLoading}
-        />
-        {compact && <ActionIcon onClick={togglePlaySound}>{isPlaying ? <FaPause /> : <FaPlay />}</ActionIcon>}
-      </Flex>
 
-    
       <ReactPlayer
         url={url}
         playing={isPlaying}
@@ -142,11 +156,12 @@ const VideoPrevResponse = ({ data, source, compact, style }: Props) => {
         muted={mute}
         controls
         width="100%"
-        height="auto"
+        height={isVideo ? "auto" : "50px"}
         onReady={() => setIsLoading(false)}
         onDuration={setDuration}
         onProgress={({ playedSeconds }) => setSeek(playedSeconds)}
         onError={() => setError("Error loading media")}
+        // style={{ border: "2px solid green" }}
       />
 
       {!compact && (
@@ -159,16 +174,6 @@ const VideoPrevResponse = ({ data, source, compact, style }: Props) => {
             { maxWidth: 400, cols: 1, spacing: "md" },
           ]}
         >
-          {error.length === 0 && (
-            <>
-              <Button onClick={togglePlaySound} disabled={isLoading} leftIcon={isPlaying ? <FaPause /> : <FaPlay />}>
-                {isPlaying ? "Pause" : "Play"}
-              </Button>
-              <Button onClick={stopSound} disabled={isLoading} leftIcon={<FaStop />} color="red">
-                Stop
-              </Button>
-            </>
-          )}
           {error.length !== 0 && (
             <Alert color="red" title="Error loading Media">
               <Flex align="center" justify="space-between">
@@ -179,13 +184,6 @@ const VideoPrevResponse = ({ data, source, compact, style }: Props) => {
               </Flex>
             </Alert>
           )}
-          <Flex align="center" gap="sm" justify="flex-start">
-            <div onClick={handleToggleMute}>
-              {mute && <FaVolumeMute />}
-              {!mute && (volume > 60 ? <FaVolumeUp /> : volume < 10 ? <FaVolumeOff /> : <FaVolumeDown />)}
-            </div>
-            <Slider style={{ width: "100%" }} id="volume" onChange={handleChangeVolume} value={mute ? 0 : volume} />
-          </Flex>
         </SimpleGrid>
       )}
     </Paper>

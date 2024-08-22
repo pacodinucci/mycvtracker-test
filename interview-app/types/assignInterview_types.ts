@@ -54,7 +54,6 @@ export type addEmployerRequest = {
   industry: string;
   headquarter: string;
   website: string;
-
 };
 export type addRecruiterRequest = {
   name: string;
@@ -79,30 +78,30 @@ export type addRefEmployerData = {
 };
 
 export type BookInterviewslot = {
-  candidateName: string,
-  candidateEmail: string,
-  mobile: string,
-  location: string,
+  candidateName: string;
+  candidateEmail: string;
+  mobile: string;
+  location: string;
 
-  skills: string,
-
+  skills: string;
 };
 
 export type BookTechInterviewslot = {
   candidateName: string;
   candidateEmail: string;
-  mobile: string,
-  location: string,
-  interviewDate: string,
-  timeSlot: string,
-  skills: string,
-  timeZone: string
+  mobile: string;
+  location: string;
+  interviewDate: string;
+  timeSlot: string;
+  skills: string;
+  timeZone: string;
 };
 
 export const InterviewMode = {
   AUDIO: "Audio",
+  AUDIO_VIDEO: "Audio / Video",
   MCQ: "Multiple choice",
   AUDIO_WITH_HR: "Audio with HR question",
   MCQ_WITH_HR: "Multiple choice with HR question",
   VIDEO: "Video",
-}
+};
