@@ -5,7 +5,7 @@ import AudioTestBtn from '../components/AudioPreviewTester';
 import Styles from '../styles/Audio.module.css';
 
 const ErrorHandle = () => {
-  const DoubleTest = typeof document !== 'undefined' ? document.getElementById("DoubleTest") : null;
+
 
   
 
