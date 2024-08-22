@@ -7,12 +7,12 @@ import Styles from '../styles/Audio.module.css';
 const ErrorHandle = () => {
 
 
-  
+
 
   return (
     <>
       <div className={Styles.error_message} id="DoubleTest">
-        <h1  >404</h1>
+        <h1>404</h1>
         <p >Page not Found</p>
       </div>
     </>

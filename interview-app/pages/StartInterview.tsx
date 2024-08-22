@@ -36,56 +36,70 @@ const StartInterview = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [play, setPlay] = useState<play>("play_rec");
   const { user, isLoading: isLoadingUser } = useUserState();
-  const [candidate, setCandidate] = useState<Candidatedata>({timeBetweenQuestions: 60} as Candidatedata);
+  const [candidate, setCandidate] = useState<Candidatedata>({ timeBetweenQuestions: 60 } as Candidatedata);
   const [isPreparing, setIsPreparing] = useState(false);
 
   const interviewMode = router.query.interviewMode;
-const Urlnavigator= "http://localhost:3000/interview-app/StartInterview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode="
+  const urlnavigator = "http://localhost:3000/interview-app/StartInterview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode="
 
-const MissingParam =()=>{
-  
-}
-
-
-
-const RedirectionToPage =()=>{
-  let lastparam = Urlnavigator.split('&')
-  let interviewparam = lastparam[lastparam.length -1]
-  let interviewEquiv = interviewparam.split('=')
-  let finalparam =interviewEquiv[interviewEquiv.length -1]
-  console.log(finalparam)
-  
-  if(finalparam){
-    switch (finalparam){
-      case 'AUDIO':
-        router.push('/AudioTest'); // Redirect to another page
-        break
-  
-      case 'VIDEO':
-        router.push('/VideoTest'); // Redirect to another page
-        break
-      case 'MCQ':
-        router.push('/_mcq'); // Redirect to another page
-        break
-  
-      break
-      default:
-        router.push('/'); // Redirect to another page
-      break;
-    }
-  } else{
-      router.push('/ErrorPage'); // Redirect to another page
+  const redirectToErrorPage = () => {
+    router.push('/ErrorPage');
   }
-}
 
- useEffect(() => {
- /*    if (interviewMode === 'Test') {
-      router.push('/AudioTest'); // Redirect to another page
-    }*/
-   RedirectionToPage()
+  const checkMissingParams = () => {
+    let urlParamList = urlnavigator.split('?');
+    let token = urlParamList[0].split('=');
+    let tokenStr = token[token.length - 1];
+    let interviewType = urlParamList[1].split('=');
+    let interviewTypeStr = interviewType[interviewType.length - 1];
+    let interviewModeParam = urlParamList[urlParamList.length - 1].split('=');
+    let interviewModeStr = interviewModeParam[interviewModeParam.length - 1];
+
+    if (!tokenStr || !interviewTypeStr || !interviewModeStr) {
+      redirectToErrorPage();
+    }
+  }
+
+
+  const RedirectionToPage = () => {
+    let lastparam = urlnavigator.split('&')
+    let interviewparam = lastparam[lastparam.length - 1]
+    let interviewEquiv = interviewparam.split('=')
+    let finalparam = interviewEquiv[interviewEquiv.length - 1]
+    console.log(finalparam)
+
+    if (finalparam) {
+      switch (finalparam) {
+        case 'AUDIO':
+          router.push('/AudioTest'); // Redirect to another page
+          break
+
+        case 'VIDEO':
+          router.push('/VideoTest'); // Redirect to another page
+          break
+        case 'MCQ':
+          router.push('/_mcq'); // Redirect to another page
+          break
+
+          break
+        default:
+          router.push('/'); // Redirect to another page
+          break;
+      }
+    } else {
+      router.push('/ErrorPage'); // Redirect to another page
+    }
+  }
+
+  useEffect(() => {
+    /*    if (interviewMode === 'Test') {
+         router.push('/AudioTest'); // Redirect to another page
+       }*/
+    checkMissingParams();
+    RedirectionToPage()
   }, [interviewMode, router]);
 }
-  
+
 
 export default StartInterview;
 
