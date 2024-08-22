@@ -174,6 +174,25 @@ const VideoPrevResponse = ({ data, source, compact, style }: Props) => {
             { maxWidth: 400, cols: 1, spacing: "md" },
           ]}
         >
+          {error.length === 0 && (
+            <>
+              <Button
+                onClick={togglePlaySound}
+                disabled={isLoading}
+                leftIcon={isPlaying ? <FaPause /> : <FaPlay />}
+              >
+                {isPlaying ? "Pause" : "Play"}
+              </Button>
+              <Button
+                onClick={stopSound}
+                disabled={isLoading}
+                leftIcon={<FaStop />}
+                color="red"
+              >
+                Stop
+              </Button>
+            </>
+          )}
           {error.length !== 0 && (
             <Alert color="red" title="Error loading Media">
               <Flex align="center" justify="space-between">
@@ -184,6 +203,25 @@ const VideoPrevResponse = ({ data, source, compact, style }: Props) => {
               </Flex>
             </Alert>
           )}
+          <Flex align="center" gap="sm" justify="flex-start">
+            <div onClick={handleToggleMute}>
+              {mute && <FaVolumeMute />}
+              {!mute &&
+                (volume > 60 ? (
+                  <FaVolumeUp />
+                ) : volume < 10 ? (
+                  <FaVolumeOff />
+                ) : (
+                  <FaVolumeDown />
+                ))}
+            </div>
+            <Slider
+              style={{ width: "100%" }}
+              id="volume"
+              onChange={handleChangeVolume}
+              value={mute ? 0 : volume}
+            />
+          </Flex>
         </SimpleGrid>
       )}
     </Paper>
