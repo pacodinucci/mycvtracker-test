@@ -67,7 +67,6 @@ const StartInterview = () => {
 
 
   const RedirectionToPage = () => {
-    debugger;
     let lastparam = currentfullUrl.split('&')
     let interviewparam = lastparam[lastparam.length - 1]
     let interviewEquiv = interviewparam.split('=')
