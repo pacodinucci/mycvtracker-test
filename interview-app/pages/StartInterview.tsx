@@ -40,19 +40,24 @@ const StartInterview = () => {
   const [isPreparing, setIsPreparing] = useState(false);
 
   const interviewMode = router.query.interviewMode;
-  const urlnavigator = "http://localhost:3000/interview-app/StartInterview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode="
+  const urlnavigator = "http://localhost:3000/interview-app/StartInterview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode=";
+  const currentfullUrl = router.asPath;
+
 
   const redirectToErrorPage = () => {
     router.push('/ErrorPage');
   }
 
   const checkMissingParams = () => {
-    let urlParamList = urlnavigator.split('?');
-    let token = urlParamList[0].split('=');
+    let urlParamList = currentfullUrl.split('?');
+    let urlParamSub = urlParamList[urlParamList.length - 1].split('&');
+    if (urlParamSub.length == 0) redirectToErrorPage();
+
+    let token = urlParamSub[0].split('=');
     let tokenStr = token[token.length - 1];
-    let interviewType = urlParamList[1].split('=');
+    let interviewType = urlParamSub[1].split('=');
     let interviewTypeStr = interviewType[interviewType.length - 1];
-    let interviewModeParam = urlParamList[urlParamList.length - 1].split('=');
+    let interviewModeParam = urlParamSub[urlParamSub.length - 1].split('=');
     let interviewModeStr = interviewModeParam[interviewModeParam.length - 1];
 
     if (!tokenStr || !interviewTypeStr || !interviewModeStr) {
@@ -62,11 +67,11 @@ const StartInterview = () => {
 
 
   const RedirectionToPage = () => {
-    let lastparam = urlnavigator.split('&')
+    debugger;
+    let lastparam = currentfullUrl.split('&')
     let interviewparam = lastparam[lastparam.length - 1]
     let interviewEquiv = interviewparam.split('=')
     let finalparam = interviewEquiv[interviewEquiv.length - 1]
-    console.log(finalparam)
 
     if (finalparam) {
       switch (finalparam) {
@@ -87,7 +92,7 @@ const StartInterview = () => {
           break;
       }
     } else {
-      router.push('/ErrorPage'); // Redirect to another page
+      redirectToErrorPage(); // Redirect to another page
     }
   }
 
