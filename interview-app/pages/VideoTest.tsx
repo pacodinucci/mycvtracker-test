@@ -6,17 +6,24 @@ import Styles from '../styles/Audio.module.css';
 import Webcam from 'react-webcam';
 import { BrowserRouter } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
+
 const token = Array.from({length: 32}, () => Math.random().toString(36)[2]).join('');
 console.log(token);
 const VideoTest = () => {
-    
+    const router = useRouter();
+  const { mode } = router.query;
+
+
     const [displayAudio, setDisplayAudio] = useState(false);
   
      const baseUrl = "http://localhost:3001/interview-app/interview";
-   // const token ="4a979b61bfc749a7bb5a65eafc2aff65"
-   //const token ="a7873dbcc4b2432daf47e63440316d68"
+
     const interviewType = "reactjs01_nodejs01"; // You might want to get this dynamically as well if neede
 
+    useEffect(() => {
+        console.log("Mode:", mode); // This should log 'AUDIO'
+      }, [mode]);
     // Construct the URL with the dynamic token
     const fullUrl = `${baseUrl}?token=${token}&interviewType=${interviewType}`;
     console.log(fullUrl);
@@ -32,7 +39,7 @@ const VideoTest = () => {
                 const root = createRoot(TestAudioSectionPreview);
                 root.render(
                 
-< VideoTestBtn  />
+< VideoTestBtn URL={fullUrl} />
                         );
             }
         };

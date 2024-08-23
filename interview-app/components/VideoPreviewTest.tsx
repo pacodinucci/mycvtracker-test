@@ -11,7 +11,7 @@ type Link = {
   Url: string;
 };
 
-const VideoPreviewTester= () => {
+const VideoPreviewTester= (URL: any) => {
     const { status, startRecording, stopRecording, mediaBlobUrl } = useReactMediaRecorder({ video: true });
     const video=document.getElementById("video")
     const videoConstraints = {
@@ -76,7 +76,7 @@ const VideoPreviewTester= () => {
        </>)}
        <br />
        <button >
-       <a href='#' target="_blank" rel="noopener noreferrer" className={Styles.linkText}>Proceed to interview</a>
+       <a href={URL} target="_blank" rel="noopener noreferrer" className={Styles.linkText}>Proceed to interview</a>
       </button>
 
         </>

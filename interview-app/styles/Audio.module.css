@@ -1,8 +1,8 @@
 .audioSection{
     text-align:Center;
     background-color:white;
-    height:390px;
-    padding:90px
+
+    padding:80px
 }
 
 .interviewbtn{
@@ -34,15 +34,11 @@
   .startRecording:hover{
     color: white;
     background-color:#0e6bb7; /*  */
-   
-    
   }
   
   .startRecording:active{
     color: white;
     background-color: #0e6bb7; /*  */
-    
-    
   }
 .text{
     

@@ -13,6 +13,7 @@ import { authRoutes } from "../data/route";
 
 import AudioTest from "./AudioTest";
 import { InterviewMode } from "../types/assignInterview_types";
+import Interview from "./interview_details";
 
 
 
@@ -39,15 +40,32 @@ const StartInterview = () => {
   const [candidate, setCandidate] = useState<Candidatedata>({ timeBetweenQuestions: 60 } as Candidatedata);
   const [isPreparing, setIsPreparing] = useState(false);
 
+  
   const interviewMode = router.query.interviewMode;
-  const urlnavigator = "http://localhost:3000/interview-app/StartInterview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode="
+  const urlnavigator = "http://localhost:3005/interview-app/StartInterview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode=AUDIO"
 
   const redirectToErrorPage = () => {
     router.push('/ErrorPage');
   }
 
+const getInterviewType =()=>{
+  let lastparam = urlnavigator.split('&')
+  let interviewparam = lastparam[1]
+  let interviewEquiv = interviewparam.split('=')
+  let finalparam = interviewEquiv[interviewEquiv.length - 1]
+  
+  console.log(lastparam)
+  console.log(interviewparam)
+  console.log(interviewEquiv)
+  console.log(finalparam)
+  return finalparam;
+
+}
+
+
   const checkMissingParams = () => {
     let urlParamList = urlnavigator.split('?');
+    debugger;
     let token = urlParamList[0].split('=');
     let tokenStr = token[token.length - 1];
     let interviewType = urlParamList[1].split('=');
@@ -72,15 +90,16 @@ const StartInterview = () => {
       switch (finalparam) {
         case 'AUDIO':
           router.push('/AudioTest'); // Redirect to another page
+          query: { mode: finalparam }
           break
 
         case 'VIDEO':
           router.push('/VideoTest'); // Redirect to another page
+          query: { mode: finalparam }
           break
         case 'MCQ':
           router.push('/_mcq'); // Redirect to another page
-          break
-
+          query: { mode: finalparam }
           break
         default:
           router.push('/'); // Redirect to another page
@@ -95,6 +114,7 @@ const StartInterview = () => {
     /*    if (interviewMode === 'Test') {
          router.push('/AudioTest'); // Redirect to another page
        }*/
+         getInterviewType()
     checkMissingParams();
     RedirectionToPage()
   }, [interviewMode, router]);
