@@ -59,11 +59,14 @@ const Interview_app = () => {
   const firstQuestion = 0;
   const lastQuestion = questions.length - 1;
   const randomQuestion = useMemo(() => {
-    let randomIndex;
+    if (questions.length < 3) {
+      return;
+    }
+    let random;
     do {
-      randomIndex = Math.floor(Math.random() * questions.length);
-    } while (randomIndex === 0 || randomIndex === questions.length - 1);
-    return randomIndex;
+      random = Math.floor(Math.random() * questions.length);
+    } while (random === firstQuestion || random === lastQuestion);
+    return random;
   }, [questions.length]);
 
   useEffect(() => {
@@ -416,3 +419,7 @@ const Interview_app = () => {
 };
 
 export default Interview_app;
+
+// http://localhost:3000/interview-app/VideoInterview?token=ab9d954496da446d8c2d0b85bd49adf8&interviewType=reactjs01
+
+// http://localhost:3000/interview-app/shared-candidate/getVideoResults?token=ab9d954496da446d8c2d0b85bd49adf8&interviewType=reactjs01

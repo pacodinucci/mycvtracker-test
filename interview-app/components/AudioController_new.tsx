@@ -148,7 +148,6 @@ const AudioController_new = ({
                     {(play == 'stop_recording') ?
                         <> <span className={styles.record_fsize}>Recording Stopped.
                         </span>
-                            {(currectQuestion == 0) && <div className={styles.listen_fsize}>Listen your recording.</div>}
                         </>
                         :
                         (play == 'uploading') ?
@@ -167,12 +166,12 @@ const AudioController_new = ({
                             </button> */}
                             {blob && (
                                 <div className={styles.preview}>
-                                    <PrevResponse
+                                    {/* <PrevResponse
                                         source={blob ? URL.createObjectURL(blob) : ""}
                                         compact={true}
                                         style={{ width: "100%", maxWidth: 300 }}
 
-                                    />
+                                    /> */}
                                 </div>
                             )}
                         </> :
