@@ -104,4 +104,7 @@ export const InterviewMode = {
   AUDIO_WITH_HR: "Audio with HR question",
   MCQ_WITH_HR: "Multiple choice with HR question",
   VIDEO: "Video",
+  VIDEO_WITH_HR: "Video with HR",
+  FULL_VIDEO: "Full Video",
+  FULL_VIDEO_WITH_HR: "Full Video with HR",
 };
