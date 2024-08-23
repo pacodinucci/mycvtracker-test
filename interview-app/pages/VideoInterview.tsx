@@ -36,7 +36,16 @@ const Interview_app = () => {
 
   const firstQuestion = 0;
   const lastQuestion = questions.length - 1;
-  const randomQuestion = useMemo(() => Math.floor(Math.random() * questions.length), [questions.length]);
+  const randomQuestion = useMemo(() => {
+    if (questions.length < 3) {
+      return
+    }
+    let random;
+    do {
+      random = Math.floor(Math.random() * questions.length);
+    } while (random === firstQuestion || random === lastQuestion);
+    return random;
+  }, [questions.length]);
 
   useEffect(() => {
     const initialize = async () => {
@@ -357,3 +366,6 @@ const Interview_app = () => {
 export default Interview_app;
 
 
+// http://localhost:3000/interview-app/VideoInterview?token=ab9d954496da446d8c2d0b85bd49adf8&interviewType=reactjs01
+
+// http://localhost:3000/interview-app/shared-candidate/getVideoResults?token=ab9d954496da446d8c2d0b85bd49adf8&interviewType=reactjs01
