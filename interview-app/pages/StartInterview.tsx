@@ -40,15 +40,18 @@ const StartInterview = () => {
   const [isPreparing, setIsPreparing] = useState(false);
 
   const interviewMode = router.query.interviewMode;
-  const urlnavigator = "http://localhost:3000/interview-app/StartInterview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode=";
   const currentfullUrl = router.asPath;
+  let isMissingParam = false;
+
 
 
   const redirectToErrorPage = () => {
     router.push('/ErrorPage');
+    isMissingParam = true;
   }
 
   const checkMissingParams = () => {
+    debugger;
     let urlParamList = currentfullUrl.split('?');
     let urlParamSub = urlParamList[urlParamList.length - 1].split('&');
     if (urlParamSub.length == 0) redirectToErrorPage();
@@ -67,6 +70,8 @@ const StartInterview = () => {
 
 
   const RedirectionToPage = () => {
+    debugger;
+    if (isMissingParam) return;
     let lastparam = currentfullUrl.split('&')
     let interviewparam = lastparam[lastparam.length - 1]
     let interviewEquiv = interviewparam.split('=')
@@ -96,9 +101,6 @@ const StartInterview = () => {
   }
 
   useEffect(() => {
-    /*    if (interviewMode === 'Test') {
-         router.push('/AudioTest'); // Redirect to another page
-       }*/
     checkMissingParams();
     RedirectionToPage()
   }, [interviewMode, router]);
@@ -114,3 +116,4 @@ export default StartInterview;
 //http://localhost:3004/interview-app/StartInterview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode=VIDEO
 //http://localhost:3004/interview-app/interview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode=VIDEO
 //http://localhost:3004/interview-app/interview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode=MCQ
+//http://localhost:3000/interview-app/StartInterview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode=VIDEO
