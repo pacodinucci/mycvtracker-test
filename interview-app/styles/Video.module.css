@@ -11,19 +11,14 @@
   
   .startRecording:hover{
     color: white;
-    background-color: #2a93d5; /*  */
-   
-    
+    background-color: #2a93d5; /*  */  
   }
   
   .startRecording:active{
     color: white;
     background-color: #2a93d5; /*  */
-    
-    
   }
   .text{
-  
     font-style:normal;
     font-family: 'Times New Roman', Times, serif;
     font-weight: bold;
@@ -78,8 +73,6 @@
 .videoSize{
     width: 500px;
     height: 380px;
-    margin-left:280px;
-    position:relative;
-    top:25px;
-    left:-130px
+    margin-left:-980px;
+   
 }

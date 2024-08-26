@@ -22,7 +22,7 @@ const VideoPreviewTester= (URL: any) => {
     const [show, setShow] = useState(true);
     const [hasPermission, setHasPermission] = useState<boolean | null>(null);
     const [operation, setOperation] = useState<Operation>("startInterview");
-
+    const [proceedbtn, setProceedBtn] =useState(false)
 
     useEffect(() => {
         const StartRecordbtn = document.getElementById("StartRecord");
@@ -31,14 +31,14 @@ const VideoPreviewTester= (URL: any) => {
         StartRecordbtn?.addEventListener("click", ()=>{
           startRecording()
           setShow(true)
-         
+          setProceedBtn(false)
         });
+
         StopRecordbtn?.addEventListener("click", ()=>{
           setShow(false)
-
-          
-          stopRecording()});
-
+          stopRecording()
+          setProceedBtn(true)
+        });
         // Cleanup event listeners on component unmount
         return () => {
             StartRecordbtn?.removeEventListener("click", startRecording);
@@ -74,13 +74,18 @@ const VideoPreviewTester= (URL: any) => {
           audio={true}
         />
        </>)}
-       <br />
+
+       <br/>
+       
+       {proceedbtn && (
+        <>
        <button >
        <a href={URL} target="_blank" rel="noopener noreferrer" className={Styles.linkText}>Proceed to interview</a>
       </button>
+      </>
+       )}
 
-        </>
-    );
-};
-
+    </>
+    
+  )}
 export default VideoPreviewTester;

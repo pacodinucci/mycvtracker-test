@@ -1,21 +1,18 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Alert, Button, Container, Header, Box, Modal, Flex, Title, Progress, Text, LoadingOverlay } from "@mantine/core";
-import { useRouter } from "next/router";
 import AudioController from "../components/AudioController";
 import { getCandidateDetails, getMyQuestions } from "../apis/mycvtracker/questions";
 import { Candidatedata, Question } from "../types/question_types";
 import Instructions from "../components/Instructions";
 import { submitAnswer } from "../apis/mycvtracker/submit_interview";
-import styles from "../styles/questionAdd.module.css";
 import AudioController_new from "../components/AudioController_new";
 import { useUserState } from "../hooks/useUserState";
 import { authRoutes } from "../data/route";
-
 import AudioTest from "./AudioTest";
 import { InterviewMode } from "../types/assignInterview_types";
 import Interview from "./interview_details";
 
-
+import { useRouter } from "next/router";
 
 
 type Operation = "startInterview" | "loading" | "recording" | "countdown" | "stopped";
@@ -42,14 +39,15 @@ const StartInterview = () => {
 
   
   const interviewMode = router.query.interviewMode;
-  const urlnavigator = "http://localhost:3005/interview-app/StartInterview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode=AUDIO"
+  const currentfullUrl = router.asPath;
+
 
   const redirectToErrorPage = () => {
     router.push('/ErrorPage');
   }
 
 const getInterviewType =()=>{
-  let lastparam = urlnavigator.split('&')
+  let lastparam = currentfullUrl.split('&')
   let interviewparam = lastparam[1]
   let interviewEquiv = interviewparam.split('=')
   let finalparam = interviewEquiv[interviewEquiv.length - 1]
@@ -64,15 +62,16 @@ const getInterviewType =()=>{
 
 
   const checkMissingParams = () => {
-    let urlParamList = urlnavigator.split('?');
-    debugger;
-    let token = urlParamList[0].split('=');
-    let tokenStr = token[token.length - 1];
-    let interviewType = urlParamList[1].split('=');
-    let interviewTypeStr = interviewType[interviewType.length - 1];
-    let interviewModeParam = urlParamList[urlParamList.length - 1].split('=');
-    let interviewModeStr = interviewModeParam[interviewModeParam.length - 1];
+    let urlParamList = currentfullUrl.split('?');
+    let urlParamSub = urlParamList[urlParamList.length - 1].split('&');
+    if (urlParamSub.length == 0) redirectToErrorPage();
 
+    let token = urlParamSub[0].split('=');
+    let tokenStr = token[token.length - 1];
+    let interviewType = urlParamSub[1].split('=');
+    let interviewTypeStr = interviewType[interviewType.length - 1];
+    let interviewModeParam = urlParamSub[urlParamSub.length - 1].split('=');
+    let interviewModeStr = interviewModeParam[interviewModeParam.length - 1];
     if (!tokenStr || !interviewTypeStr || !interviewModeStr) {
       redirectToErrorPage();
     }
@@ -80,11 +79,10 @@ const getInterviewType =()=>{
 
 
   const RedirectionToPage = () => {
-    let lastparam = urlnavigator.split('&')
+    let lastparam = currentfullUrl.split('&')
     let interviewparam = lastparam[lastparam.length - 1]
     let interviewEquiv = interviewparam.split('=')
     let finalparam = interviewEquiv[interviewEquiv.length - 1]
-    console.log(finalparam)
 
     if (finalparam) {
       switch (finalparam) {
@@ -106,7 +104,7 @@ const getInterviewType =()=>{
           break;
       }
     } else {
-      router.push('/ErrorPage'); // Redirect to another page
+      redirectToErrorPage(); // Redirect to another page
     }
   }
 
@@ -127,6 +125,6 @@ export default StartInterview;
 
 //http://localhost:3001/interview-app/interview?token=37aa704e512145a9a9d8f709c9483222&interviewType=reactjs01_nodejs01&interviewMode=Test
 
-//http://localhost:3004/interview-app/StartInterview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode=VIDEO
+//http://localhost:3006/interview-app/StartInterview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode=VIDEO
 //http://localhost:3004/interview-app/interview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode=VIDEO
 //http://localhost:3004/interview-app/interview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode=MCQ
