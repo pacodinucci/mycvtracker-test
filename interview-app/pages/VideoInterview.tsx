@@ -25,8 +25,6 @@ import styles from "../styles/questionAdd.module.css";
 import AudioController_new from "../components/AudioController_new";
 import { useUserState } from "../hooks/useUserState";
 import { authRoutes } from "../data/route";
-import VideoTest from "./VideoTest";
-import { useNavigate, useSearchParams } from 'react-router-dom';
 
 type Operation =
   | "startInterview"
