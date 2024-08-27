@@ -99,7 +99,8 @@ export type BookTechInterviewslot = {
 
 export const InterviewMode = {
   AUDIO: "Audio",
-  AUDIO_VIDEO: "Audio / Video",
+  AUDIO_VIDEO: "Audio / Video", // not working
+  AUDIO_FEEDBACK: "Audio Feedback",
   MCQ: "Multiple choice",
   AUDIO_WITH_HR: "Audio with HR question",
   MCQ_WITH_HR: "Multiple choice with HR question",
