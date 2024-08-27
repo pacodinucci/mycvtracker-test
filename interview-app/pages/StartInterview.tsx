@@ -65,7 +65,7 @@ const getInterviewType =()=>{
 
 
   const checkMissingParams = () => {
-    debugger;
+  
     let urlParamList = currentfullUrl.split('?');
     let urlParamSub = urlParamList[urlParamList.length - 1].split('&');
     if (urlParamSub.length == 0) redirectToErrorPage();
