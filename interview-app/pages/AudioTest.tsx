@@ -1,14 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { createRoot } from 'react-dom/client';
 import Styles from '../styles/Audio.module.css';
 import AudioTestBtn from '../components/AudioPreviewTester';
 import { Badge } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { Flex, Button } from '@mantine/core';
+import { useRouter } from "next/router";
 
 const AudioTest = () => {
   const media = useMediaQuery("(min-width: 767px)");
   const regulartn = Styles.audioSection
+  const router = useRouter()
+  
+  const GoToInterview = () => {
+
+    //useEffect(() => {
+  
+  
+    const {query} = router
+   console.log(query)
+     //window.location.href = `/interview-app/interview?token=${query.token}&interviewType=${query.interviewType}` ; // Redirect to the interview page
+     
+    //},  [])
+    
+    router.push(`/interview?token=${query.token}&interviewType=${query.interviewType}`)
+   }
+    
   const GiveAudio = () => {
     const token = Array.from({length: 32}, () => Math.random().toString(36)[2]).join('');
     const baseUrl = "http://localhost:3001/interview-app/interview";
@@ -17,7 +34,6 @@ const AudioTest = () => {
 
     // Construct the URL with the dynamic token
     const fullUrl = `${baseUrl}?token=${token}&interviewType=${interviewType}`;
-    console.log(fullUrl);
     
     const TestAudioSectionPreview = document.getElementById('TestAudioSection');
 
@@ -26,6 +42,8 @@ const AudioTest = () => {
       root.render(
         <div>
           <AudioTestBtn  />
+          <button onClick={GoToInterview} className={Styles.startRecording} type="button">Proceed to interview</button>
+
         </div>
       );
     }
