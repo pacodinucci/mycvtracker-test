@@ -371,5 +371,3 @@ const FullVideo = () => {
 };
 
 export default FullVideo;
-
-// http://localhost:3000/interview-app/FullVideo?token=9ae229b01f0e4582b275be992962cc1b&interviewType=reactjs01
