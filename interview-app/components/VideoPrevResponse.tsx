@@ -24,6 +24,7 @@ import {
   FaVolumeDown,
   FaRedo,
 } from "react-icons/fa";
+import ReactPlayer from "react-player";
 
 type Props = {
   data?: AudioResponse;
