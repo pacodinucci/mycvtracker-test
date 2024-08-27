@@ -36,6 +36,8 @@ type play = "play_rec" | "stop_recording" | "uploading";
 
 const Interview_app = () => {
   const router = useRouter();
+  const {interviewMode} = router.query
+
   const [token, setToken] = useState("");
   const [types, setTypes] = useState<string[]>([]);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
@@ -297,6 +299,7 @@ const Interview_app = () => {
     startCountdown();
     setCurrentQuestion((prev) => prev + 1);
   }, [startCountdown, stopRecording]);
+
 
   if (questions.length > 0 && currectQuestion >= questions.length) {
     return (

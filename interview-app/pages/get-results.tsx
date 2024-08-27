@@ -496,15 +496,7 @@ const GetResults = () => {
     }
   }, [getAllResults, token]);
 
-  // useEffect(() => {
-  //   if (router.query.token) {
-  //     if (!Array.isArray(router.query.token)) {
-  //       getAllResults({ token: router.query.token });
-  //       router.replace(router.asPath, router.route, { shallow: true });
-  //     }
-  //   }
-  // }, [router, getAllResults]);
-
+  
   const getInterviewResponce = useCallback(
     async (token: any) => {
       try {
@@ -517,7 +509,7 @@ const GetResults = () => {
           );
         } else {
           // if(audioRes){
-          // window.open(`http://localhost:3000/interview-app/shared-candidate/getAudioResults?token=${token}&interviewType=ProductManager01`,'_blank');
+          // window.open(`http://localhost:3000/interview-app/shared-candidate/getAudioResults?token=${token}&ProductManager01`,'_blank');
           // }
           scrollIntoView({ alignment: "center" });
         }
@@ -912,25 +904,7 @@ const GetResults = () => {
       >
         Assign Interview
       </Button>
-      {/* <Paper p="md" my="md">
-        <form onSubmit={details.onSubmit(handleFormSubmit)}>
-          <TextInput
-            placeholder="johndoe@email.com"
-            label="Candidate Email"
-            withAsterisk
-            {...details.getInputProps("candidate")}
-          />
-          <TextInput placeholder="token" label="Token" {...details.getInputProps("token")} withAsterisk />
-          <TextInput placeholder="John Doe" label="Candidate Name" {...details.getInputProps("candidateName")} />
-          <TextInput placeholder="https://mycvtracker.com" label="Job Link" {...details.getInputProps("lobLink")} />
-          <Button type="submit" disabled={isLoading} mt="lg">
-            Get Interview Results
-          </Button>
-        </form>
-      </Paper> */}
-      {/* <Button type="button" disabled={isLoading} mt="lg" onClick={getAllResults} className={styles.search}>
-        Get Candidate Details
-      </Button> */}
+   
       {showEmployer && (
         <div>
           <TextInput

@@ -11,6 +11,9 @@ import AudioController_new from "../components/AudioController_new";
 import { useUserState } from "../hooks/useUserState";
 import { authRoutes } from "../data/route";
 
+import AudioTest from "./AudioTest";
+import { InterviewMode } from "../types/assignInterview_types";
+
 
 
 
@@ -36,10 +39,12 @@ const Interview_app = () => {
   const [candidate, setCandidate] = useState<Candidatedata>({timeBetweenQuestions: 60} as Candidatedata);
   const [isPreparing, setIsPreparing] = useState(false);
 
+  
   useEffect(() => {
     const initialize = async () => {
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: true,
+        video: true,
       });
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorder.addEventListener("dataavailable", (event) => {
@@ -111,7 +116,7 @@ const Interview_app = () => {
   // TODO: Enable before deployment
   useEffect(() => {
     navigator.mediaDevices
-      .getUserMedia({ audio: true })
+      .getUserMedia({video: true, audio: true })
       .then(() => setHasPermission(true))
       .catch(() => setHasPermission(false));
   }, []);
@@ -269,76 +274,84 @@ const Interview_app = () => {
   const itwQuestion = questions[currectQuestion]
 
   return (
-    <Box>
-       <LoadingOverlay visible={isPreparing} zIndex={99999}/>
-      <Modal opened={showInstructions && !isPreparing} onClose={() => setShowInstructions(false)} size="xl">
-        <Instructions timeBetweenQuestions={timeBetweenQuestions}/>
-      </Modal>
-      <Box pt={85} />
-      <Header fixed={true} height={140} mt={70} p={0} style={{ zIndex: 9, maxHeight: 500, height: 555 }}>
-        <Flex direction="column" p="sm">
-          <Flex direction="row" align="center" justify="space-between" gap="lg">
-          {(operation !== 'startInterview') &&
-            <Flex style={{ width: "100%" }} direction="column">
-              <Progress
-                value={(currectQuestion / questions.length) * 100}
-                style={{ width: "100%", maxWidth: 300, height: 12, marginTop: 10, marginLeft: 10 }}
-                size="sm"
-              />
-              <Text fz="sm"  className={styles.quetion_bold} style={{ marginLeft: 10 }}>{`Question  : ${currectQuestion + 1} of ${questions.length}`}</Text>
+    <div>
+        <Box>
+        <LoadingOverlay visible={isPreparing} zIndex={99999}/>
+       <Modal opened={showInstructions && !isPreparing} onClose={() => setShowInstructions(false)} size="xl">
+         <Instructions timeBetweenQuestions={timeBetweenQuestions}/>
+       </Modal>
+       <Box pt={85} />
+       <Header fixed={true} height={140} mt={70} p={0} style={{ zIndex: 9, maxHeight: 500, height: 555 }}>
+         <Flex direction="column" p="sm">
+           <Flex direction="row" align="center" justify="space-between" gap="lg">
+           {(operation !== 'startInterview') &&
+             <Flex style={{ width: "100%" }} direction="column">
+               <Progress
+                 value={(currectQuestion / questions.length) * 100}
+                 style={{ width: "100%", maxWidth: 300, height: 12, marginTop: 10, marginLeft: 10 }}
+                 size="sm"
+               />
+               <Text fz="sm"  className={styles.quetion_bold} style={{ marginLeft: 10 }}>{`Question  : ${currectQuestion + 1} of ${questions.length}`}</Text>
+ 
+             </Flex>
+             }
+             {!isPreparing && (operation === 'startInterview') && <Button size="xs" className={styles.instructions_btn} onClick={() => setShowInstructions(true)} style={{ alignSelf: "flex-end" }}>
+               Show Instructions
+             </Button>
+             }
+           </Flex>
+ 
+           <div className={styles.quetion_fsize}>{currectQuestion > -1 && itwQuestion?.question}</div>
+ 
+           <AudioController_new
+             operation={operation}
+             totalQuestions={questions.length}
+             currectQuestion={currectQuestion}
+             timeLeft={countDownTimer}
+             isUploading={isUploading}
+             startInterview={() => handleStartInterview(token, types)}
+             stopRecording={stopRecording}
+             skipQuestion={skipQuestion}
+             blob={audioBlob}
+             uploadAnswer={() => uploadAudio(audioBlob, countDownTimer, currectQuestion)}
+             play={play}
+           />
+ 
+         </Flex>
+       </Header>
+       <Container style={{ marginTop: 50 }}>
+         {token.length < 1 && (
+           <Alert title="Invalid Token" color="red">
+             Invalid Token, Please Check the link. Please check the link.
+           </Alert>
+         )}
+         {types.length < 1 && (
+           <Alert title="No Interview Types" color="red">
+             No Interview types detected. Please check the link.
+           </Alert>
+         )}
+ 
+         {hasPermission === false && (
+           <Alert title="No Permission" color="red">
+             Please provide permissions for audio
+           </Alert>
+         )}
+         {hasPermission === null && (
+           <Alert title="Checking Permission" color="blue">
+             Requesting Permission for Audio, please click allow.
+           </Alert>
+         )}
+         {/* <div className={styles.quetion_fsize}>{currectQuestion > -1 && questions[currectQuestion].question}</div> */}
+       </Container>
+     </Box>
+      
+    </div>
 
-            </Flex>
-            }
-            {!isPreparing && (operation === 'startInterview') && <Button size="xs" className={styles.instructions_btn} onClick={() => setShowInstructions(true)} style={{ alignSelf: "flex-end" }}>
-              Show Instructions
-            </Button>
-            }
-          </Flex>
-
-          <div className={styles.quetion_fsize}>{currectQuestion > -1 && itwQuestion?.question}</div>
-
-          <AudioController_new
-            operation={operation}
-            totalQuestions={questions.length}
-            currectQuestion={currectQuestion}
-            timeLeft={countDownTimer}
-            isUploading={isUploading}
-            startInterview={() => handleStartInterview(token, types)}
-            stopRecording={stopRecording}
-            skipQuestion={skipQuestion}
-            blob={audioBlob}
-            uploadAnswer={() => uploadAudio(audioBlob, countDownTimer, currectQuestion)}
-            play={play}
-          />
-
-        </Flex>
-      </Header>
-      <Container style={{ marginTop: 50 }}>
-        {token.length < 1 && (
-          <Alert title="Invalid Token" color="red">
-            Invalid Token, Please Check the link. Please check the link.
-          </Alert>
-        )}
-        {types.length < 1 && (
-          <Alert title="No Interview Types" color="red">
-            No Interview types detected. Please check the link.
-          </Alert>
-        )}
-
-        {hasPermission === false && (
-          <Alert title="No Permission" color="red">
-            Please provide permissions for audio
-          </Alert>
-        )}
-        {hasPermission === null && (
-          <Alert title="Checking Permission" color="blue">
-            Requesting Permission for Audio, please click allow.
-          </Alert>
-        )}
-        {/* <div className={styles.quetion_fsize}>{currectQuestion > -1 && questions[currectQuestion].question}</div> */}
-      </Container>
-    </Box>
   );
 };
 
 export default Interview_app;
+
+//http://localhost:3000/interview-app/shared-candidate/getVideoResults?token=37aa704e512145a9a9d8f709c9483222&interviewType=reactjs01_nodejs01
+
+//http://localhost:3001/interview-app/interview?token=37aa704e512145a9a9d8f709c9483222&interviewType=reactjs01_nodejs01&interviewMode=Test

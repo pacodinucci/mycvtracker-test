@@ -12,7 +12,7 @@ import {
 } from "@mantine/core";
 import { AudioResponse } from "../types/audioResponse_types";
 import ReactHowler from "react-howler";
-import ReactPlayer from "react-player";
+//import ReactPlayer from "react-player";
 
 import {
   FaPlay,

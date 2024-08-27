@@ -65,13 +65,9 @@ export const NavLinkRoutes = [
     label: "Third Party Data",
   },
 
-  {
-    path:"/screenrecorder",
-    icon: FaUserPlus,
-    label:"video",
-  },
-
  
+ 
+
 
   
 
