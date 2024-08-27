@@ -127,7 +127,7 @@ export default StartInterview;
 
 //http://localhost:3001/interview-app/interview?token=37aa704e512145a9a9d8f709c9483222&interviewType=reactjs01_nodejs01&interviewMode=Test
 
-//http://localhost:3006/interview-app/StartInterview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode=VIDEO
+//http://localhost:3001/interview-app/StartInterview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode=VIDEO
 //http://localhost:3004/interview-app/interview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode=VIDEO
 //http://localhost:3004/interview-app/interview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode=MCQ
 //http://localhost:3000/interview-app/StartInterview?token=abcdjkdfkd&interviewType=REACTJS01&interviewMode=VIDEO
