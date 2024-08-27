@@ -90,7 +90,7 @@ const FullVideo = () => {
 
     const initializeMedia = async () => {
       try {
-        const constraints = { video: true };
+        const constraints = { video: true, audio: true };
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
         console.log("getUserMedia call was successful");
         setHasPermission(true);
@@ -372,4 +372,4 @@ const FullVideo = () => {
 
 export default FullVideo;
 
-// http://localhost:3000/interview-app/FullVideo?token=f3b67163211d4916bf26aee8c3535159&interviewType=reactjs01
+// http://localhost:3000/interview-app/FullVideo?token=9ae229b01f0e4582b275be992962cc1b&interviewType=reactjs01
