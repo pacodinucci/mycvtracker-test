@@ -8,15 +8,14 @@ type Props = {
 };
 
 const AudioPreviewTester = () => {
-  //const router = useRouter();
-  //const interviewMode = router.query.interviewMode;
-  const interviewMode =false ;
+  const interviewMode = false;
 
-  const GoToInterview =()=>{
-    const interviewMode =true
+  const GoToInterview = () => {
+    const interviewMode = true
     if (interviewMode === true) {
-      window.location.href='/interview-app/interview'; // Redirect to the interview page
-    }}
+      window.location.href = '/interview-app/interview'; // Redirect to the interview page
+    }
+  }
 
 
 
@@ -31,6 +30,7 @@ const AudioPreviewTester = () => {
       <button onClick={stopRecording} className={Styles.startRecording}>Stop Recording</button>
       <br /><br /> <br />
       <div>
+
         {mediaBlobUrl && (
           <audio
             src={mediaBlobUrl}
@@ -38,9 +38,10 @@ const AudioPreviewTester = () => {
             className={Styles.audioplayer}
           />
         )}
-      <button >
-       <a href='#' target="_blank" rel="noopener noreferrer" className={Styles.linkText}>Proceed to interview</a>
-      </button>       </div>
+
+        <a href='#' target="_blank" rel="noopener noreferrer" className={Styles.startRecording} type="button">Proceed to interview</a>
+
+      </div>
     </>
   );
 };

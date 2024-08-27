@@ -10,6 +10,7 @@ import Style from '../styles/Audio.module.css';
 type Link = {
   Url: string;
 };
+import { Flex, Button } from '@mantine/core';
 
 const VideoPreviewTester= (URL: any) => {
     const { status, startRecording, stopRecording, mediaBlobUrl } = useReactMediaRecorder({ video: true });
@@ -52,17 +53,30 @@ const VideoPreviewTester= (URL: any) => {
       
         <div className={Style.audioSection}>
             <h1 className={Styles.text} >Test Your Video When You're Ready</h1>
-            
+            <Flex
+      mih={50}
+      gap="xl"
+      justify="center"
+      align="center"
+      direction="row"
+      wrap="wrap"
+    >
             <button id="StartRecord" className={`${Styles.startButton} ${Styles.button} ${Styles.text} ${Styles.buttonContainer}`}>Start Recording</button>
             <button id="StopRecord" className= {`${Styles.stopButton} ${Styles.button}  ${Styles.text} ${Styles.buttonContainer}`}>Stop Recording</button>
-         
+         </Flex>
             {/* Display the recorded video */}
             {!show &&(
               <>
+  <Flex
+      mih={50}
+      gap="xl"
+      justify="center"
+      align="center"
+      direction="column"
+      wrap="wrap"
+    >
             {mediaBlobUrl && <video id='video' className={Styles.videoSize} src={mediaBlobUrl} controls />}
-          
-
-
+    </Flex>
             </>
             )}
         </div>
