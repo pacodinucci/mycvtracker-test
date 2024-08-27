@@ -38,7 +38,7 @@ const StartInterview = () => {
       console.log("Should redirect to FULL_VIDEO_WITH_HR");
     }
   }, [router]);
-
+//Hello
   return null;
 };
 
