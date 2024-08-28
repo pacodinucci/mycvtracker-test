@@ -1,66 +1,70 @@
-import React, { useState, useEffect } from 'react';
-import VideoTestBtn from '../components/VideoPreviewTest';
+import React, { useState, useEffect } from "react";
 import "react-responsive-modal/styles.css";
-import { createRoot } from 'react-dom/client';
-import Styles from '../styles/Audio.module.css';
-const token = Array.from({ length: 32 }, () => Math.random().toString(36)[2]).join('');
-console.log(token);
+import dynamic from "next/dynamic";
+import { createRoot } from "react-dom/client";
+import Styles from "../styles/Audio.module.css";
+import { useRouter } from "next/router";
+
+const VideoPreviewTest = dynamic(
+  () => import("../components/VideoPreviewTest"),
+  {
+    ssr: false,
+  }
+);
+
 const VideoTest = () => {
+  const [displayAudio, setDisplayAudio] = useState(false);
+  const router = useRouter();
+  const { query } = router;
+  const { interviewType, interviewMode, token } = query;
 
-    const [displayAudio, setDisplayAudio] = useState(false);
+  const component =
+    interviewMode === "AUDIO_VIDEO" ? "VideoInterview" : "FullVideo";
 
-    const baseUrl = "http://localhost:3001/interview-app/interview";
-    // const token ="4a979b61bfc749a7bb5a65eafc2aff65"
-    //const token ="a7873dbcc4b2432daf47e63440316d68"
-    const interviewType = "reactjs01_nodejs01"; // You might want to get this dynamically as well if neede
+  const values = {
+    interviewType,
+    interviewMode,
+    token,
+    component,
+  };
 
-   
-    // Construct the URL with the dynamic token
-    const fullUrl = `${baseUrl}?token=${token}&interviewType=${interviewType}`;
-    console.log(fullUrl);
+  useEffect(() => {
+    // This code will only run on the client side
+    const TestAudioSectionPreview = document.getElementById("TestAudioSection");
+    const btn = document.getElementById("btn");
 
-    useEffect(() => {
-        // This code will only run on the client side
-        const TestAudioSectionPreview = document.getElementById('TestAudioSection');
-        const btn = document.getElementById('btn');
+    const GiveAudio = () => {
+      if (TestAudioSectionPreview) {
+        const root = createRoot(TestAudioSectionPreview);
+        root.render(<VideoPreviewTest values={values} />);
+      }
+    };
 
-        const GiveAudio = () => {
-            if (TestAudioSectionPreview) {
+    // Add event listener
+    if (btn) {
+      btn.addEventListener("click", GiveAudio);
+    }
 
-                const root = createRoot(TestAudioSectionPreview);
-                root.render(
+    // Cleanup event listener
+    return () => {
+      if (btn) {
+        btn.removeEventListener("click", GiveAudio);
+      }
+    };
+  }, []); // Empty dependency array means this effect runs once when the component mounts
 
-                    < VideoTestBtn />
-                );
-            }
-        };
+  return (
+    <>
+      <div id="TestAudioSection" className={Styles.audioSection}>
+        <h1>Hi</h1>
+        <h1>Test your audio and video before you start your interview</h1>
 
-        // Add event listener
-        if (btn) {
-            btn.addEventListener('click', GiveAudio);
-        }
-
-        // Cleanup event listener
-        return () => {
-            if (btn) {
-                btn.removeEventListener('click', GiveAudio);
-            }
-        };
-    }, []); // Empty dependency array means this effect runs once when the component mounts
-
-    return (
-
-        <>
-            <div id='TestAudioSection' className={Styles.audioSection}>
-                <h1>Hi</h1>
-                <h1>Test your audio before you start your interview</h1>
-                
-                <button id='btn' className={Styles.startRecording}>Before you start Test your Video</button>
-
-
-            </div>
-        </>
-    );
+        <button id="btn" className={Styles.startRecording}>
+          Before you start Test your Video
+        </button>
+      </div>
+    </>
+  );
 };
 
 export default VideoTest;

@@ -16,7 +16,7 @@ const StartInterview = () => {
       );
     } else if (interviewMode === "AUDIO_VIDEO") {
       router.push(
-        `/VideoInterview?token=${query.token}&interviewType=${query.interviewType}`
+        `/VideoTest?token=${query.token}&interviewType=${query.interviewType}&interviewMode=${interviewMode}`
       );
     } else if (interviewMode === "AUDIO_FEEDBACK") {
       console.log("Should redirect to AUDIO_FEEDBACK");
@@ -32,13 +32,13 @@ const StartInterview = () => {
       console.log("Should redirect to VIDEO_WITH_HR");
     } else if (interviewMode === "FULL_VIDEO") {
       router.push(
-        `/FullVideo?token=${query.token}&interviewType=${query.interviewType}`
+        `/VideoTest?token=${query.token}&interviewType=${query.interviewType}`
       );
     } else if (interviewMode === "FULL_VIDEO_WITH_HR") {
       console.log("Should redirect to FULL_VIDEO_WITH_HR");
     }
   }, [router]);
-//Hello
+  //Hello
   return null;
 };
 
