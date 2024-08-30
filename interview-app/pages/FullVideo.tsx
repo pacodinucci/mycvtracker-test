@@ -172,6 +172,9 @@ const FullVideo = () => {
         const response = await submitAnswer(fd);
         setVideoBlob(null);
         setOperation("countdown");
+
+        setPlay("play_rec");
+
         startCountdown();
         setCurrectQuestion((prev) => prev + 1);
       } catch (e) {
@@ -184,13 +187,22 @@ const FullVideo = () => {
   );
 
   const stopRecording = useCallback(() => {
-    if (recorder) recorder.stop();
+    if (!recorder) {
+      console.log("Recorder not initialized");
+      return;
+    }
+
+    recorder.stop();
+    setPlay("stop_recording");
     setOperation("recording");
     setCountdownInterval((prev) => {
       if (prev !== null) clearInterval(prev);
       return null;
     });
-    uploadData(videoBlob, countDownTimer, currectQuestion);
+
+    recorder.onstop = () => {
+      uploadData(videoBlob, countDownTimer, currectQuestion);
+    };
   }, [recorder, uploadData, videoBlob, countDownTimer, currectQuestion]);
 
   const startInterview = useCallback(
