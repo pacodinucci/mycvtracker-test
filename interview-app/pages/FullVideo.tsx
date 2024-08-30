@@ -59,7 +59,6 @@ const FullVideo = () => {
 
   useEffect(() => {
     const initialize = async () => {
-      console.log("Current Question:", currectQuestion);
       if (router.query.token && !Array.isArray(router.query.token)) {
         setIsPreparing(true);
         const candToken = router.query.token;
@@ -92,13 +91,11 @@ const FullVideo = () => {
       try {
         const constraints = { video: true, audio: true };
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        console.log("getUserMedia call was successful");
         setHasPermission(true);
         const mediaRecorder = new MediaRecorder(stream, {
           mimeType: "video/webm",
         });
         mediaRecorder.addEventListener("dataavailable", (event) => {
-          console.log(event);
           setVideoBlob(event.data);
         });
         setRecorder(mediaRecorder);
