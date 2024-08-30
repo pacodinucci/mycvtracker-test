@@ -124,23 +124,6 @@ const AssignInterviewPage = () => {
     [token, showErrorToast, showSuccessToast]
   );
 
-  // const handleSendReminder = useCallback(
-  //   async (values: FormType) => {
-  //     try {
-  //       setIsLoading(true);
-  //       console.log('values....'+values);
-  //       await sendRemiderRequest({ ...values, interviewType: values.interviewType.join("_") }, token);
-  //       showSuccessToast("Your Request has been submitted");
-  //     } catch (e: any) {
-  //       console.log(e);
-  //       if (alerts[e.response.status]) showErrorToast(alerts[e.response.status].message);
-  //       else showErrorToast("Encountered Some Error");
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   },
-  //   [token, showErrorToast, showSuccessToast]
-  // );
 
   return (
     <Container>

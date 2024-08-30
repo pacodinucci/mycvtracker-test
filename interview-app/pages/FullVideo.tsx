@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+"use client";
+
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Alert,
   Button,
@@ -13,7 +15,6 @@ import {
   LoadingOverlay,
 } from "@mantine/core";
 import { useRouter } from "next/router";
-import AudioController from "../components/AudioController";
 import {
   getCandidateDetails,
   getMyQuestions,
@@ -22,9 +23,8 @@ import { Candidatedata, Question } from "../types/question_types";
 import Instructions from "../components/Instructions";
 import { submitAnswer } from "../apis/mycvtracker/submit_interview";
 import styles from "../styles/questionAdd.module.css";
-import AudioController_new from "../components/AudioController_new";
 import { useUserState } from "../hooks/useUserState";
-import { authRoutes } from "../data/route";
+import AudioController_new from "../components/AudioController_new";
 
 type Operation =
   | "startInterview"
@@ -32,24 +32,23 @@ type Operation =
   | "recording"
   | "countdown"
   | "stopped";
+
 type play = "play_rec" | "stop_recording" | "uploading";
 
-const Interview_app = () => {
+const FullVideo = () => {
   const router = useRouter();
-  const {interviewMode} = router.query
-
   const [token, setToken] = useState("");
   const [types, setTypes] = useState<string[]>([]);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [currectQuestion, setCurrentQuestion] = useState(-1);
+  const [currectQuestion, setCurrectQuestion] = useState(-1);
   const [countDownTimer, setCountDownTimer] = useState(5);
   const [countdownInterval, setCountdownInterval] =
     useState<NodeJS.Timer | null>(null);
   const [operation, setOperation] = useState<Operation>("startInterview");
   const [showInstructions, setShowInstructions] = useState(false);
   const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [videoBlob, setVideoBlob] = useState<Blob | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [play, setPlay] = useState<play>("play_rec");
   const { user, isLoading: isLoadingUser } = useUserState();
@@ -58,25 +57,9 @@ const Interview_app = () => {
   } as Candidatedata);
   const [isPreparing, setIsPreparing] = useState(false);
 
-  const firstQuestion = 0;
-  const lastQuestion = questions.length - 1;
-  const randomQuestion = useMemo(() => {
-    if (questions.length < 3) {
-      return;
-    }
-    let random;
-    do {
-      random = Math.floor(Math.random() * questions.length);
-    } while (random === firstQuestion || random === lastQuestion);
-    return random;
-  }, [questions.length]);
-
   useEffect(() => {
     const initialize = async () => {
       console.log("Current Question:", currectQuestion);
-      console.log("First Question:", firstQuestion);
-      console.log("Last Question:", lastQuestion);
-      console.log("Random Question:", randomQuestion);
       if (router.query.token && !Array.isArray(router.query.token)) {
         setIsPreparing(true);
         const candToken = router.query.token;
@@ -107,20 +90,16 @@ const Interview_app = () => {
 
     const initializeMedia = async () => {
       try {
-        const isSpecialQuestion =
-          currectQuestion === firstQuestion ||
-          currectQuestion === lastQuestion ||
-          currectQuestion === randomQuestion;
-        const constraints = isSpecialQuestion
-          ? { audio: true, video: true }
-          : { audio: true };
+        const constraints = { video: true, audio: true };
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
         console.log("getUserMedia call was successful");
         setHasPermission(true);
-        const mediaRecorder = new MediaRecorder(stream);
+        const mediaRecorder = new MediaRecorder(stream, {
+          mimeType: "video/webm",
+        });
         mediaRecorder.addEventListener("dataavailable", (event) => {
           console.log(event);
-          setAudioBlob(event.data);
+          setVideoBlob(event.data);
         });
         setRecorder(mediaRecorder);
       } catch (error) {
@@ -153,15 +132,7 @@ const Interview_app = () => {
         }
       };
     }
-  }, [
-    user,
-    isLoadingUser,
-    currectQuestion,
-    firstQuestion,
-    lastQuestion,
-    randomQuestion,
-    router,
-  ]);
+  }, [user, isLoadingUser, currectQuestion, router]);
 
   const startCountdown = useCallback(() => {
     setCountDownTimer(10);
@@ -178,12 +149,11 @@ const Interview_app = () => {
   const startRecording = useCallback(() => {
     const { timeBetweenQuestions } = candidate;
     setOperation("recording");
-    setPlay("play_rec");
     setCountDownTimer(timeBetweenQuestions);
     if (recorder) {
       recorder.start((timeBetweenQuestions + 3) * 1000);
     } else {
-      console.log("error");
+      console.log("Error: Recorder not initialized.");
     }
   }, [candidate, recorder]);
 
@@ -193,59 +163,39 @@ const Interview_app = () => {
       if (questions.length === 0 || question === -1) return;
       try {
         const url = URL.createObjectURL(data);
-        console.log(url);
         const fd = new FormData();
-        fd.append(
-          "file",
-          data,
-          `${new Date().toISOString()}.${
-            currectQuestion === firstQuestion ||
-            currectQuestion === lastQuestion ||
-            currectQuestion === randomQuestion
-              ? "mov"
-              : "wav"
-          }`
-        );
+        fd.append("file", data, `${new Date().toISOString()}.webm`);
         fd.set("Candidate", token);
         fd.set("questionId", questions[question].id.toString());
         fd.set("attemptTime", duration.toString());
         setIsUploading(true);
         const response = await submitAnswer(fd);
-        setAudioBlob(null);
+        setVideoBlob(null);
         setOperation("countdown");
         startCountdown();
-        setCurrentQuestion((prev) => prev + 1);
+        setCurrectQuestion((prev) => prev + 1);
       } catch (e) {
-        console.log("error");
+        console.log("Error uploading data:", e);
       } finally {
         setIsUploading(false);
       }
     },
-    [
-      token,
-      questions,
-      startCountdown,
-      currectQuestion,
-      firstQuestion,
-      lastQuestion,
-      randomQuestion,
-    ]
+    [token, questions, startCountdown, currectQuestion]
   );
 
   const stopRecording = useCallback(() => {
     if (recorder) recorder.stop();
-    setPlay("stop_recording");
     setOperation("recording");
     setCountdownInterval((prev) => {
       if (prev !== null) clearInterval(prev);
       return null;
     });
-    uploadData(audioBlob, countDownTimer, currectQuestion);
-  }, [recorder, uploadData, audioBlob, countDownTimer, currectQuestion]);
+    uploadData(videoBlob, countDownTimer, currectQuestion);
+  }, [recorder, uploadData, videoBlob, countDownTimer, currectQuestion]);
 
   const startInterview = useCallback(
     (startfrom: number) => {
-      setCurrentQuestion(startfrom);
+      setCurrectQuestion(startfrom);
       startCountdown();
     },
     [startCountdown]
@@ -263,18 +213,18 @@ const Interview_app = () => {
 
   const getQuestions = useCallback(async (token: string, types: string[]) => {
     try {
-      const audioQuestions: Question[] = await getMyQuestions(
+      const videoQuestions: Question[] = await getMyQuestions(
         token,
         types.join("_")
       );
-      if (audioQuestions) {
-        const currentQuesIdx = audioQuestions.findIndex(
+      if (videoQuestions) {
+        const currentQuesIdx = videoQuestions.findIndex(
           (question) => !question.answered
         );
         startInterview(
-          currentQuesIdx !== -1 ? currentQuesIdx : audioQuestions.length
+          currentQuesIdx !== -1 ? currentQuesIdx : videoQuestions.length
         );
-        setQuestions(audioQuestions);
+        setQuestions(videoQuestions);
       }
     } catch (e: any) {
       setToken("");
@@ -288,7 +238,7 @@ const Interview_app = () => {
         setOperation("loading");
         getQuestions(token, types);
       } else {
-        // Throw Error
+        // Handle error
       }
     },
     [hasPermission, getQuestions]
@@ -297,9 +247,8 @@ const Interview_app = () => {
   const skipQuestion = useCallback(() => {
     stopRecording();
     startCountdown();
-    setCurrentQuestion((prev) => prev + 1);
+    setCurrectQuestion((prev) => prev + 1);
   }, [startCountdown, stopRecording]);
-
 
   if (questions.length > 0 && currectQuestion >= questions.length) {
     return (
@@ -308,7 +257,7 @@ const Interview_app = () => {
           Thank you for attending the interview
         </Title>
         <Title order={3} align="center">
-          Our team will evalute the answers and get back to you
+          Our team will evaluate the answers and get back to you
         </Title>
         <Title order={6} align="center">
           If you have any doubts, you can contact us at info@mycvtracker.com
@@ -387,9 +336,9 @@ const Interview_app = () => {
             startInterview={() => handleStartInterview(token, types)}
             stopRecording={stopRecording}
             skipQuestion={skipQuestion}
-            blob={audioBlob}
+            blob={videoBlob}
             uploadAnswer={() =>
-              uploadData(audioBlob, countDownTimer, currectQuestion)
+              uploadData(videoBlob, countDownTimer, currectQuestion)
             }
             play={play}
           />
@@ -421,8 +370,4 @@ const Interview_app = () => {
   );
 };
 
-export default Interview_app;
-
-// http://localhost:3000/interview-app/VideoInterview?token=ab9d954496da446d8c2d0b85bd49adf8&interviewType=reactjs01
-
-// http://localhost:3000/interview-app/shared-candidate/getVideoResults?token=ab9d954496da446d8c2d0b85bd49adf8&interviewType=reactjs01
+export default FullVideo;

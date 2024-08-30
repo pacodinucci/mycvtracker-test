@@ -7,12 +7,14 @@ import PrevResponse from "../components/PrevResponse";
 import { AudioResponse } from "../types/audioResponse_types";
 
 import { FaSearch, FaArrowRight } from "react-icons/fa";
-
-const Responses = () => {
+interface TokenDisplayProps {
+  token: string;
+}
+const Responses: React.FC<TokenDisplayProps> = ({ token }) => {
   const router = useRouter();
   const theme = useMantineTheme();
   const [responses, setResponses] = useState<{ data: AudioResponse[]; loading: boolean }>({ data: [], loading: false });
-
+ 
   const details = useForm({
     initialValues: {
       token: "",

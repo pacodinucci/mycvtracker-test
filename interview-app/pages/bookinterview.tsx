@@ -206,7 +206,7 @@ const BookInterview_slot = () => {
               </Group>
             </Radio.Group>
           )}
-
+  
           {!queryParams.has("skills") && (
             <>
               <MultiSelect
