@@ -1,4 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback, MutableRefObject, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  MutableRefObject,
+  useMemo,
+} from "react";
 
 import {
   Container,
@@ -39,7 +46,10 @@ import {
 } from "../apis/mycvtracker";
 import { useToast } from "../hooks/useToast";
 import { useUserState } from "../hooks/useUserState";
-import { CandidateResultRequest, InterviewMode } from "../types/assignInterview_types";
+import {
+  CandidateResultRequest,
+  InterviewMode,
+} from "../types/assignInterview_types";
 import { alerts } from "../utils/alert-utils";
 import styles from "../styles/questionAdd.module.css";
 import { getInterviewResults } from "../apis/mycvtracker";
@@ -80,7 +90,6 @@ import MCQResponse from "../components/MCQResponse";
 import { InterviewSkillCategory } from "../types/interview_skill_category_type";
 import { getInterviewSkillCategories } from "../apis/mycvtracker/interview-skill-catogory";
 import { toInterviewTopics } from "../utils/interview-skill-category-utils";
-
 
 // import { symlink } from "fs";
 // import { getIntResultByEmail } from "../apis/mycvtracker/assign-interview";
@@ -185,49 +194,44 @@ const GetResults = () => {
   const [editNotes, setEditNotes] = useState(true);
   const [candName, setCandName] = useState("");
   const [audioRes, setAudioRes] = useState(false);
-  const addNoteRef = React.useRef() as React.MutableRefObject<HTMLInputElement>
+  const addNoteRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
   const [notePage, setNotePage] = useState(1);
-  const [maskResume, setMaskResume] = useState('showResume');
-  const [fullResponse, setFullResponse] = useState('showResponse');
+  const [maskResume, setMaskResume] = useState("showResume");
+  const [fullResponse, setFullResponse] = useState("showResponse");
   const [reponseRes, setReponseRes] = useState(false);
   const [noCV, setNoCV] = useState(false);
   const [noRes, setNoRes] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [notesContent, setNotesContent] = useState('');
+  const [notesContent, setNotesContent] = useState("");
   const [notesToken, setNotesToken] = useState();
   // const [updateNotes,setUpdateNotes] = useState<any | null>(null);
-  const [updateNotes, setUpdateNotes] = useState('');
+  const [updateNotes, setUpdateNotes] = useState("");
 
-  const [interviewSkills, setinterviewSkills] = useState<InterviewSkillCategory[]>([])
+  const [interviewSkills, setinterviewSkills] = useState<
+    InterviewSkillCategory[]
+  >([]);
 
   const getInterviewSkills = useCallback(
-    async (params: Record<string, string |number> = {}) => {
-     const res = await getInterviewSkillCategories(params)
-     setinterviewSkills(res)
+    async (params: Record<string, string | number> = {}) => {
+      const res = await getInterviewSkillCategories(params);
+      setinterviewSkills(res);
     },
-    [],
-  )
-
+    []
+  );
 
   useEffect(() => {
-    getInterviewSkills()
-  }, [getInterviewSkills])
+    getInterviewSkills();
+  }, [getInterviewSkills]);
 
-
-  const InterviewTopics =  useMemo(() => toInterviewTopics(interviewSkills), [interviewSkills]);
-
-
+  const InterviewTopics = useMemo(
+    () => toInterviewTopics(interviewSkills),
+    [interviewSkills]
+  );
 
   const fetchThirdParties = useCallback(
     async (search: string | null = "", e: any) => {
       if (token) {
-        const response = await showThirdParties(
-          token,
-          1,
-          30,
-          search || "",
-          e
-        );
+        const response = await showThirdParties(token, 1, 30, search || "", e);
         setThirdPaties(response.data);
       }
     },
@@ -238,7 +242,7 @@ const GetResults = () => {
 
   useEffect(() => {
     if (createInterviewModalOpened) {
-      fetchThirdParties('', 'RECRUITER_PARTY');
+      fetchThirdParties("", "RECRUITER_PARTY");
     }
     //setReponseRes(reponseRes)
   }, [createInterviewModalOpened, fetchThirdParties]);
@@ -271,7 +275,8 @@ const GetResults = () => {
       jobLink: (value) => (value.length < 4 ? "Invalid Job Link" : null),
       interviewType: (value) =>
         value.length < 1 ? "Select atleast 1 topic" : null,
-        timeBetweenQuestions : (value) => value < 1 ? "Invalid time between questions" : null
+      timeBetweenQuestions: (value) =>
+        value < 1 ? "Invalid time between questions" : null,
       // date: (value) => (value.length < 8 ? "Entervalid date" : null),
     },
   });
@@ -306,18 +311,32 @@ const GetResults = () => {
     async (values: NewInterviewSharingFormType) => {
       const candidate = selectedCandidate?.current;
       if (!values.showOriginResume && !values.NoResume && !values.showResume) {
-        (values.showResume = true)
+        values.showResume = true;
       }
-      if (!values.showFullResponse && !values.NoResponse && !values.showResponse) {
-        (values.showResponse = true)
+      if (
+        !values.showFullResponse &&
+        !values.NoResponse &&
+        !values.showResponse
+      ) {
+        values.showResponse = true;
       }
-      if (values.showFullResponse || values.showResponse || values.showOriginResume || values.showResume) {
+      if (
+        values.showFullResponse ||
+        values.showResponse ||
+        values.showOriginResume ||
+        values.showResume
+      ) {
         setReponseRes(false);
       } else {
         setReponseRes(true);
       }
       if (!candidate) return;
-      if (values.showFullResponse || values.showResponse || values.showOriginResume || values.showResume) {
+      if (
+        values.showFullResponse ||
+        values.showResponse ||
+        values.showOriginResume ||
+        values.showResume
+      ) {
         try {
           await createInterviewSharing(values, candidate, token);
           showSuccessToast("Your Request has been submitted");
@@ -339,7 +358,7 @@ const GetResults = () => {
   const addEmpAssInterview = () => {
     setaddEmployer(true);
     setshowEmployer(false);
-    fetchThirdParties('', "EMPLOYER");
+    fetchThirdParties("", "EMPLOYER");
     handleAutocomplete();
   };
 
@@ -364,6 +383,7 @@ const GetResults = () => {
   const handleFormSubmit = useCallback(
     async (values: FormType) => {
       // return console.log(values.interviewType.map((t) => `${t.value}${t.level[0]}${t.level[1]}`).join("_"));
+      console.log(values);
       try {
         setIsLoading(true);
         await sendAssignInterview(
@@ -409,7 +429,7 @@ const GetResults = () => {
           });
         }
       }
-    } catch (e) { }
+    } catch (e) {}
   };
   const getResultByEmail = //useCallback(
     async (values: CandidateResultRequest) => {
@@ -442,12 +462,12 @@ const GetResults = () => {
       const listCount = await getCandidateLsitCount(token, "", search);
       setListCount({ data: listCount.data.noRecords, loading: false });
       setPartyLength(Math.ceil(listCount.data.noRecords / 10));
-    } catch (e) { }
+    } catch (e) {}
     try {
       // setResponses((prev) => ({ ...prev, loading: true }));
       const response = await getInterviewResults(token, 1, 10, "", search);
       setResponses({ data: response.data, loading: false });
-    } catch (e) { }
+    } catch (e) {}
   }, [search, token]);
 
   const debounceGetAllResults = useDebounce(getAllResults, 500);
@@ -464,7 +484,7 @@ const GetResults = () => {
         );
         setListCount({ data: listCount.data.noRecords, loading: false });
         setPartyLength(Math.ceil(listCount.data.noRecords / 10));
-      } catch (e) { }
+      } catch (e) {}
     },
     [debounceGetAllResults]
   );
@@ -476,38 +496,27 @@ const GetResults = () => {
     }
   }, [getAllResults, token]);
 
-  // useEffect(() => {
-  //   if (router.query.token) {
-  //     if (!Array.isArray(router.query.token)) {
-  //       getAllResults({ token: router.query.token });
-  //       router.replace(router.asPath, router.route, { shallow: true });
-  //     }
-  //   }
-  // }, [router, getAllResults]);
-
+  
   const getInterviewResponce = useCallback(
     async (token: any) => {
-
-
       try {
         setResults((prev) => ({ ...prev, loading: true }));
         const results = await getInterviewResponses(token);
-        setResults({ data: results.data, loading: false});
+        setResults({ data: results.data, loading: false });
         if (results.data.length == 0) {
           showErrorToast(
             "Candidate has not finished the interview assignment yet!"
           );
         } else {
           // if(audioRes){
-          // window.open(`http://localhost:3000/interview-app/shared-candidate/getAudioResults?token=${token}&interviewType=ProductManager01`,'_blank');
+          // window.open(`http://localhost:3000/interview-app/shared-candidate/getAudioResults?token=${token}&ProductManager01`,'_blank');
           // }
           scrollIntoView({ alignment: "center" });
         }
-      } catch (e) { }
+      } catch (e) {}
     },
-    [scrollIntoView, showErrorToast],
-  )
-
+    [scrollIntoView, showErrorToast]
+  );
 
   useEffect(() => {
     if (router.query.token) {
@@ -533,7 +542,7 @@ const GetResults = () => {
         search
       );
       setResponses({ data: response.data, loading: false });
-    } catch (e) { }
+    } catch (e) {}
   };
 
   const gedBadgeProps = (status: StatusEnumKeys) => {
@@ -561,7 +570,7 @@ const GetResults = () => {
       const results = await getInterviewSharings(token, candidate);
       setInterviewSharings(results.data);
       setLoadingInterviewSharings(false);
-    } catch (e) { }
+    } catch (e) {}
   };
 
   const handleDelete = async (candToken: string) => {
@@ -572,7 +581,7 @@ const GetResults = () => {
         handlePagination(pageDel);
         if (delRes.status == 200)
           showSuccessToast("Record deleted successfully");
-      } catch (e) { }
+      } catch (e) {}
     }
   };
 
@@ -581,7 +590,9 @@ const GetResults = () => {
       token: canToken,
     };
     if (
-      window.confirm("Are you sure you want send remainder email to Candidate?") === true
+      window.confirm(
+        "Are you sure you want send remainder email to Candidate?"
+      ) === true
     ) {
       try {
         await sendRemiderRequest(candToken, token);
@@ -602,7 +613,7 @@ const GetResults = () => {
     } = candidate;
 
     if (e === "Get Response") {
-       // @ts-ignore
+      // @ts-ignore
       selectedCandidate.current = candidate;
       setCandName(candidate.candidateName);
       getInterviewResponce(canToken);
@@ -641,15 +652,12 @@ const GetResults = () => {
 
   const toggleLinkResumeModal = () => {
     setFoundResumes([]);
-    setLinkResumePage(1)
+    setLinkResumePage(1);
     setLinkResumeModalOpened((prevState) => !prevState);
   };
   const shortLinkClick = (item: InterviewSharing) => {
-    window.open(
-      `/interview-app/shared-candidate/${item.shortLink}`,
-      "_blank"
-    );
-  }
+    window.open(`/interview-app/shared-candidate/${item.shortLink}`, "_blank");
+  };
   const toggleShareInterviewModal = () => {
     setInterviewSharings([]);
 
@@ -658,8 +666,12 @@ const GetResults = () => {
 
   const toggleCreateShareInterviewModal = () => {
     setReponseRes(false);
-    (selectedCandidate?.current?.resumeId) ? setMaskResume('showResume') : setMaskResume('NoResume');
-    (selectedCandidate?.current?.completed) ? setFullResponse('showResponse') : setFullResponse('NoResponse');
+    selectedCandidate?.current?.resumeId
+      ? setMaskResume("showResume")
+      : setMaskResume("NoResume");
+    selectedCandidate?.current?.completed
+      ? setFullResponse("showResponse")
+      : setFullResponse("NoResponse");
     setNoRes(false);
     setNoCV(false);
     newInterviewSharing.reset();
@@ -703,23 +715,23 @@ const GetResults = () => {
   };
 
   const handleLoadMore = async () => {
-
     try {
       setLoadingFoundResumes(true);
       const resumeResponse = await lookupResumes(
         { pageNo: linkResumePage + 1 },
         token
       );
-      setLinkResumePage(prev => prev + 1)
-      setFoundResumes(prevResumes => [...prevResumes, ...resumeResponse.data]);
+      setLinkResumePage((prev) => prev + 1);
+      setFoundResumes((prevResumes) => [
+        ...prevResumes,
+        ...resumeResponse.data,
+      ]);
 
       setLoadingFoundResumes(false);
     } catch (e) {
       showErrorToast("Loading resumes failed");
     }
-
-
-  }
+  };
 
   const linkResumeToCandidate = async () => {
     const interviewToken = selectedCandidate.current?.token;
@@ -771,13 +783,13 @@ const GetResults = () => {
   const getNotesContent = async (e: any) => {
     setNotesContent(e.target.value);
     console.log(e.target.value);
-  }
+  };
   const addNotes = async (noteToken: any, notes: any) => {
-    const notesData = { "notes": notes }
+    const notesData = { notes: notes };
     try {
       await saveAddNotes(notesData, noteToken, token);
       showSuccessToast("Notes added successfully");
-      toggleAddNotesModal('');
+      toggleAddNotesModal("");
     } catch (e: any) {
       console.log(e);
       if (alerts[e.response.status])
@@ -785,10 +797,15 @@ const GetResults = () => {
       else showErrorToast("Encountered Some Error");
     }
     try {
-      const response = await getInterviewResults(token, notePage, 10, '', search);
+      const response = await getInterviewResults(
+        token,
+        notePage,
+        10,
+        "",
+        search
+      );
       setResponses({ data: response.data, loading: false });
-
-    } catch (e) { }
+    } catch (e) {}
     // if (member.id == "1092") {
     //   setSaveNotes(false);
     //   setEditNotes(true);
@@ -797,31 +814,43 @@ const GetResults = () => {
 
   const saveEditNotes = () => {
     setNotes("test test");
-    addNoteRef.current.style.display = 'none';
+    addNoteRef.current.style.display = "none";
     setSaveNotes(true);
     setEditNotes(false);
   };
 
   const setResponseValue = (value: any) => {
     setFullResponse(value);
-    (selectedCandidate?.current?.completed) ? (newInterviewSharing.setFieldValue(value, true), setNoRes(false)) : (setFullResponse('NoResponse'), newInterviewSharing.setFieldValue('NoResponse', true), setNoRes(true));
+    selectedCandidate?.current?.completed
+      ? (newInterviewSharing.setFieldValue(value, true), setNoRes(false))
+      : (setFullResponse("NoResponse"),
+        newInterviewSharing.setFieldValue("NoResponse", true),
+        setNoRes(true));
 
     //newInterviewSharing.setFieldValue(value, true);
-    (value == 'showResponse') ? newInterviewSharing.values.showFullResponse = false : newInterviewSharing.values.showResponse = false;
+    value == "showResponse"
+      ? (newInterviewSharing.values.showFullResponse = false)
+      : (newInterviewSharing.values.showResponse = false);
 
-    if (value !== "No Response") setReponseRes(false)
-  }
+    if (value !== "No Response") setReponseRes(false);
+  };
   const setResumeValue = (value: any) => {
     setMaskResume(value);
-    (selectedCandidate?.current?.resumeId) ? (newInterviewSharing.setFieldValue(value, true), setNoCV(false)) : (setMaskResume('NoResume'), newInterviewSharing.setFieldValue('NoResume', true), setNoCV(true));
+    selectedCandidate?.current?.resumeId
+      ? (newInterviewSharing.setFieldValue(value, true), setNoCV(false))
+      : (setMaskResume("NoResume"),
+        newInterviewSharing.setFieldValue("NoResume", true),
+        setNoCV(true));
 
-    (value == 'showResume') ? newInterviewSharing.values.showOriginResume = false : newInterviewSharing.values.showResume = false;
+    value == "showResume"
+      ? (newInterviewSharing.values.showOriginResume = false)
+      : (newInterviewSharing.values.showResume = false);
 
     if (value !== "No Resume") setReponseRes(false);
-  }
+  };
   const handlePartyDelete = async (partyid: number) => {
     if (window.confirm("Are you sure you want to delete sharing") === false) {
-      return
+      return;
     }
     await deleteInterviewSharingResume(partyid, token);
     showSuccessToast("Successfully deleted sharing!");
@@ -835,37 +864,37 @@ const GetResults = () => {
       const results = await getInterviewSharings(token, candidate);
       setInterviewSharings(results.data);
       setLoadingInterviewSharings(false);
-    } catch (e) { }
-  }
+    } catch (e) {}
+  };
 
   const toggleAddNotesModal = (member: any) => {
     setNotesToken(member?.token);
     //const note_add: any = member.notes;
-    (member?.notes) ? setUpdateNotes(member?.notes) : setUpdateNotes('');
+    member?.notes ? setUpdateNotes(member?.notes) : setUpdateNotes("");
     setShowSuccess((prevState) => !prevState);
   };
 
   //copy code
 
-  const [tooltipText, setTooltipText] = useState('');
-  const [copyEmail,setEmail] = useState('')
+  const [tooltipText, setTooltipText] = useState("");
+  const [copyEmail, setEmail] = useState("");
   const handleMouseEnter = (email: string) => {
-    setEmail(email)
+    setEmail(email);
     setTooltipText(`Copy: ${email}`);
   };
   const handleMouseLeave = () => {
-    setTooltipText('');
+    setTooltipText("");
   };
   const copyEmailToClipboard = (email: string) => {
     navigator.clipboard.writeText(email); // Use the Clipboard API to copy text
-    setTooltipText('Copied!'); // Update the tooltip text
+    setTooltipText("Copied!"); // Update the tooltip text
   };
 
   return (
-    <Container sx={{ padding: '0',maxWidth:'1200px'}}>
-      <Title sx={{ marginLeft: '10px'}}>Add/Get Interviews</Title>
+    <Container sx={{ padding: "0", maxWidth: "1200px" }}>
+      <Title sx={{ marginLeft: "10px" }}>Add/Get Interviews</Title>
       <Button
-        sx={{ marginLeft: '10px'}}
+        sx={{ marginLeft: "10px" }}
         type="submit"
         variant="filled"
         my="sm"
@@ -875,36 +904,18 @@ const GetResults = () => {
       >
         Assign Interview
       </Button>
-      {/* <Paper p="md" my="md">
-        <form onSubmit={details.onSubmit(handleFormSubmit)}>
-          <TextInput
-            placeholder="johndoe@email.com"
-            label="Candidate Email"
-            withAsterisk
-            {...details.getInputProps("candidate")}
-          />
-          <TextInput placeholder="token" label="Token" {...details.getInputProps("token")} withAsterisk />
-          <TextInput placeholder="John Doe" label="Candidate Name" {...details.getInputProps("candidateName")} />
-          <TextInput placeholder="https://mycvtracker.com" label="Job Link" {...details.getInputProps("lobLink")} />
-          <Button type="submit" disabled={isLoading} mt="lg">
-            Get Interview Results
-          </Button>
-        </form>
-      </Paper> */}
-      {/* <Button type="button" disabled={isLoading} mt="lg" onClick={getAllResults} className={styles.search}>
-        Get Candidate Details
-      </Button> */}
+   
       {showEmployer && (
         <div>
           <TextInput
-            sx={{ marginLeft: '10px'}}
+            sx={{ marginLeft: "10px" }}
             placeholder="Search by any field"
             mb="md"
             className={styles.search_top}
             icon={<IconSearch size="0.9rem" stroke={1.5} />}
             value={search}
             onChange={handleOnChange}
-          //onChange={handleSearchChange}//{(e) => setSearchedVal(e.target.value)}
+            //onChange={handleSearchChange}//{(e) => setSearchedVal(e.target.value)}
           />
 
           <div className={styles.members_wrapper}>
@@ -941,22 +952,20 @@ const GetResults = () => {
                       <td className={styles.token_break1}>
                         {member.candidateName}
                       </td>
-                      <td className={styles.candidate_email}
-                          onMouseEnter={() => handleMouseEnter(member.candidate)}
-                          onMouseLeave={handleMouseLeave}
-                          onClick={() => copyEmailToClipboard(member.candidate)}
+                      <td
+                        className={styles.candidate_email}
+                        onMouseEnter={() => handleMouseEnter(member.candidate)}
+                        onMouseLeave={handleMouseLeave}
+                        onClick={() => copyEmailToClipboard(member.candidate)}
                       >
-
-                       {member.candidate}
-                       {tooltipText && copyEmail === member.candidate && (
-                            <div className={styles.tooltip}>
-                              <span className={styles.tooltiptext}>
-                                {tooltipText}
-                              </span>
-                            </div>
-                  )}
-
-
+                        {member.candidate}
+                        {tooltipText && copyEmail === member.candidate && (
+                          <div className={styles.tooltip}>
+                            <span className={styles.tooltiptext}>
+                              {tooltipText}
+                            </span>
+                          </div>
+                        )}
                       </td>
                       <td className={styles.candidate_email}>
                         {member.mobile}
@@ -965,16 +974,16 @@ const GetResults = () => {
                         {member.location}
                       </td>
                       <td className={styles.token_break}>
-                       {member.interviewType}
+                        {member.interviewType}
                       </td>
 
                       {/* member.createdAt ? setRedDate(true): setRedDate(false) */}
                       {member.completedAt ? (
                         <td className={styles.hideCol__xs}>
-                        {  member.createdAt
+                          {member.createdAt
                             ? moment(member.createdAt).format(
-                               "DD/MM/YYYY hh:mm"
-                            )
+                                "DD/MM/YYYY hh:mm"
+                              )
                             : ""}
                         </td>
                       ) : twoDaysRemaining(member.createdAt) ? (
@@ -982,10 +991,10 @@ const GetResults = () => {
                           className={styles.hideCol__xs}
                           style={{ color: "red" }}
                         >
-                        {member.createdAt
+                          {member.createdAt
                             ? moment(member.createdAt).format(
-                              "DD/MM/YYYY hh:mm"
-                            )
+                                "DD/MM/YYYY hh:mm"
+                              )
                             : ""}{" "}
                         </td>
                       ) : (
@@ -993,41 +1002,35 @@ const GetResults = () => {
                           className={styles.hideCol__xs}
                           style={{ color: "black" }}
                         >
-                           {member.createdAt
+                          {member.createdAt
                             ? moment(member.createdAt).format(
-                              "DD/MM/YYYY hh:mm"
-                            )
+                                "DD/MM/YYYY hh:mm"
+                              )
                             : ""}
                         </td>
                       )}
                       {/* <td className={styles.hideCol__xs}>{ member.createdAt ? moment(member.createdAt).format("DD/MM/YYYY hh:mm") : ''}
                         </td> */}
 
-
-
                       <td className={styles.hideCol__xs}>
-                       {member.completedAt
+                        {member.completedAt
                           ? moment(member.completedAt).format(
-                            "DD/MM/YYYY hh:mm"
-                          )
+                              "DD/MM/YYYY hh:mm"
+                            )
                           : ""}
                       </td>
 
-                     {/* Ref Code */ }
-                      <td className={styles.token_break}>
-                        {member.refCode}
-                      </td>
+                      {/* Ref Code */}
+                      <td className={styles.token_break}>{member.refCode}</td>
 
-                      {/* Score */ }
+                      {/* Score */}
+                      <td className={styles.token_break}>{member.score}</td>
+                      {/* Matching Keywords */}
                       <td className={styles.token_break}>
-                        {member.score}
-                      </td>
-                     {/* Matching Keywords */}
-                     <td className={styles.token_break}>
                         {member.matchingKeywords}
                       </td>
 
-                    {/* Resume */}
+                      {/* Resume */}
                       <td className={styles.token_break}>
                         {member.resumeId ? (
                           <> {member.resume?.resumeTitle}</>
@@ -1054,15 +1057,24 @@ const GetResults = () => {
                         <path d="M17.114,3.923h-4.589V2.427c0-0.252-0.207-0.459-0.46-0.459H7.935c-0.252,0-0.459,0.207-0.459,0.459v1.496h-4.59c-0.252,0-0.459,0.205-0.459,0.459c0,0.252,0.207,0.459,0.459,0.459h1.51v12.732c0,0.252,0.207,0.459,0.459,0.459h10.29c0.254,0,0.459-0.207,0.459-0.459V4.841h1.511c0.252,0,0.459-0.207,0.459-0.459C17.573,4.127,17.366,3.923,17.114,3.923M8.394,2.886h3.214v0.918H8.394V2.886z M14.686,17.114H5.314V4.841h9.372V17.114z M12.525,7.306v7.344c0,0.252-0.207,0.459-0.46,0.459s-0.458-0.207-0.458-0.459V7.306c0-0.254,0.205-0.459,0.458-0.459S12.525,7.051,12.525,7.306M8.394,7.306v7.344c0,0.252-0.207,0.459-0.459,0.459s-0.459-0.207-0.459-0.459V7.306c0-0.254,0.207-0.459,0.459-0.459S8.394,7.051,8.394,7.306" fill="#FFFFFF" />
                       </svg>
                     </button></td> */}
-                      {(member.notes) ? <td id={'note' + member.id}>{member.notes} <span onClick={() => toggleAddNotesModal(member)}>{<FaRegEdit />}</span></td> :
-                        <td id={'editnote' + member.id} >
-
-                          Add Notes<span onClick={() => toggleAddNotesModal(member)}>{<FaRegEdit />}</span>
+                      {member.notes ? (
+                        <td id={"note" + member.id}>
+                          {member.notes}{" "}
+                          <span onClick={() => toggleAddNotesModal(member)}>
+                            {<FaRegEdit />}
+                          </span>
                         </td>
-                      }
+                      ) : (
+                        <td id={"editnote" + member.id}>
+                          Add Notes
+                          <span onClick={() => toggleAddNotesModal(member)}>
+                            {<FaRegEdit />}
+                          </span>
+                        </td>
+                      )}
                       <td>
                         <Select
-                        sx={{width:"120px" }}
+                          sx={{ width: "120px" }}
                           placeholder="Select Action"
                           data={[
                             {
@@ -1071,13 +1083,23 @@ const GetResults = () => {
                             },
                             { value: "Get Response", label: "Get Response" },
                             {
-                              value: (!member?.completed) ? "Send Reminder Interview" : '',
-                              label: (!member?.completed) ? "Send Reminder Interview" : '',
+                              value: !member?.completed
+                                ? "Send Reminder Interview"
+                                : "",
+                              label: !member?.completed
+                                ? "Send Reminder Interview"
+                                : "",
                             },
 
                             {
-                              value: (member?.resumeId || member?.completed) ? "Share Interview" : '',
-                              label: (member?.resumeId || member?.completed) ? "Share Interview" : '',
+                              value:
+                                member?.resumeId || member?.completed
+                                  ? "Share Interview"
+                                  : "",
+                              label:
+                                member?.resumeId || member?.completed
+                                  ? "Share Interview"
+                                  : "",
                             },
                             { value: "Delete", label: "Delete" },
                             {
@@ -1115,10 +1137,9 @@ const GetResults = () => {
           )}
           <Modal
             opened={showSuccess}
-            onClose={() => toggleAddNotesModal('')}
+            onClose={() => toggleAddNotesModal("")}
             title=""
           >
-
             <Textarea
               label="Add Notes"
               placeholder="Notes"
@@ -1128,7 +1149,8 @@ const GetResults = () => {
               defaultValue={updateNotes}
               onChange={(e) => getNotesContent(e)}
             />
-            <Button className={styles.save_notestext}
+            <Button
+              className={styles.save_notestext}
               w={100}
               type="submit"
               variant="filled"
@@ -1148,10 +1170,15 @@ const GetResults = () => {
             {/* {!results.loading && results.data.length === 0 && <Alert mt="md">Wrong token or no response</Alert>} */}
             {!results.loading &&
               results.data.length > 0 &&
-              results.data.map((response) => (
-                [ "MCQ", "MCQ_WITH_HR"].includes(selectedCandidate.current?.interviewMode || "") ? <MCQResponse  data={response} key={response.questionId} /> :
-                <PrevResponse data={response} key={response.questionId} />
-              ))}
+              results.data.map((response) =>
+                ["MCQ", "MCQ_WITH_HR"].includes(
+                  selectedCandidate.current?.interviewMode || ""
+                ) ? (
+                  <MCQResponse data={response} key={response.questionId} />
+                ) : (
+                  <PrevResponse data={response} key={response.questionId} />
+                )
+              )}
           </div>
 
           <Modal
@@ -1168,9 +1195,10 @@ const GetResults = () => {
                   return (
                     <div
                       key={aResume.id}
-                      className={`${styles.linkingModalResult__selectRow} ${aResume.id === selectedLinkResume?.id &&
+                      className={`${styles.linkingModalResult__selectRow} ${
+                        aResume.id === selectedLinkResume?.id &&
                         styles.linkingModalResult__selectedRow
-                        }`}
+                      }`}
                       onClick={() => setSelectedLinkResume(aResume)}
                     >
                       <div>
@@ -1207,7 +1235,9 @@ const GetResults = () => {
               >
                 Lookup By Candidate Email
               </Button>
-              <Button ml="xs" color="green" onClick={() => handleLoadMore()}>Load more</Button>
+              <Button ml="xs" color="green" onClick={() => handleLoadMore()}>
+                Load more
+              </Button>
             </div>
           </Modal>
 
@@ -1256,10 +1286,17 @@ const GetResults = () => {
                               {Status[item.status]}
                             </Badge>
                           </td>
-                          <td>{!!item.createdAt ? moment(item.createdAt).format("yyyy-MM-DD hh:mm") : "-"}</td>
+                          <td>
+                            {!!item.createdAt
+                              ? moment(item.createdAt).format(
+                                  "yyyy-MM-DD hh:mm"
+                                )
+                              : "-"}
+                          </td>
                           <td>
                             {" "}
-                            <a className={styles.preview_link}
+                            <a
+                              className={styles.preview_link}
                               onClick={() => shortLinkClick(item)}
                             >
                               {item.shortLink}
@@ -1272,11 +1309,25 @@ const GetResults = () => {
                               {item.shortLink}
                             </a> */}
                           </td>
-                          <td><button type='button' className={styles.delete_btn} onClick={() => { handlePartyDelete(item.id); }}>
-                            <svg className={styles.svg_icon} viewBox="0 0 20 20" >
-                              <path d="M17.114,3.923h-4.589V2.427c0-0.252-0.207-0.459-0.46-0.459H7.935c-0.252,0-0.459,0.207-0.459,0.459v1.496h-4.59c-0.252,0-0.459,0.205-0.459,0.459c0,0.252,0.207,0.459,0.459,0.459h1.51v12.732c0,0.252,0.207,0.459,0.459,0.459h10.29c0.254,0,0.459-0.207,0.459-0.459V4.841h1.511c0.252,0,0.459-0.207,0.459-0.459C17.573,4.127,17.366,3.923,17.114,3.923M8.394,2.886h3.214v0.918H8.394V2.886z M14.686,17.114H5.314V4.841h9.372V17.114z M12.525,7.306v7.344c0,0.252-0.207,0.459-0.46,0.459s-0.458-0.207-0.458-0.459V7.306c0-0.254,0.205-0.459,0.458-0.459S12.525,7.051,12.525,7.306M8.394,7.306v7.344c0,0.252-0.207,0.459-0.459,0.459s-0.459-0.207-0.459-0.459V7.306c0-0.254,0.207-0.459,0.459-0.459S8.394,7.051,8.394,7.306" fill="#FFFFFF" />
-                            </svg>
-                          </button></td>
+                          <td>
+                            <button
+                              type="button"
+                              className={styles.delete_btn}
+                              onClick={() => {
+                                handlePartyDelete(item.id);
+                              }}
+                            >
+                              <svg
+                                className={styles.svg_icon}
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  d="M17.114,3.923h-4.589V2.427c0-0.252-0.207-0.459-0.46-0.459H7.935c-0.252,0-0.459,0.207-0.459,0.459v1.496h-4.59c-0.252,0-0.459,0.205-0.459,0.459c0,0.252,0.207,0.459,0.459,0.459h1.51v12.732c0,0.252,0.207,0.459,0.459,0.459h10.29c0.254,0,0.459-0.207,0.459-0.459V4.841h1.511c0.252,0,0.459-0.207,0.459-0.459C17.573,4.127,17.366,3.923,17.114,3.923M8.394,2.886h3.214v0.918H8.394V2.886z M14.686,17.114H5.314V4.841h9.372V17.114z M12.525,7.306v7.344c0,0.252-0.207,0.459-0.46,0.459s-0.458-0.207-0.458-0.459V7.306c0-0.254,0.205-0.459,0.458-0.459S12.525,7.051,12.525,7.306M8.394,7.306v7.344c0,0.252-0.207,0.459-0.459,0.459s-0.459-0.207-0.459-0.459V7.306c0-0.254,0.207-0.459,0.459-0.459S8.394,7.051,8.394,7.306"
+                                  fill="#FFFFFF"
+                                />
+                              </svg>
+                            </button>
+                          </td>
                         </tr>
                       );
                     })}
@@ -1339,7 +1390,9 @@ const GetResults = () => {
                         newInterviewSharing.setFieldValue("status", value || "")
                       }
                     />
-                    {noCV && <div className={styles.reposnse_clr}>There is no CV </div>}
+                    {noCV && (
+                      <div className={styles.reposnse_clr}>There is no CV </div>
+                    )}
                     <Radio.Group
                       value={maskResume}
                       onChange={setResumeValue}
@@ -1350,7 +1403,11 @@ const GetResults = () => {
                       <Radio value="showOriginResume" label="Original CV" />
                       <Radio value="NoResume" label="No CV " />
                     </Radio.Group>
-                    {noRes && <div className={styles.reposnse_clr}>There is no Audio results </div>}
+                    {noRes && (
+                      <div className={styles.reposnse_clr}>
+                        There is no Audio results{" "}
+                      </div>
+                    )}
                     <Radio.Group
                       value={fullResponse}
                       onChange={setResponseValue}
@@ -1362,7 +1419,11 @@ const GetResults = () => {
                       <Radio value="NoResponse" label="No Response" />
                     </Radio.Group>
 
-                    {reponseRes && <div className={styles.reposnse_clr}>Select atleast one Resume/Response</div>}
+                    {reponseRes && (
+                      <div className={styles.reposnse_clr}>
+                        Select atleast one Resume/Response
+                      </div>
+                    )}
                     {/* <Checkbox
                       mt={16}
                       label="Enable Comment"
@@ -1487,8 +1548,9 @@ const GetResults = () => {
                 withAsterisk
               >
                 <Group my="xs">
-                  {Object.entries(InterviewMode).map(([mode, label]) => <Radio key={mode} value={mode} label={label} />)}
-
+                  {Object.entries(InterviewMode).map(([mode, label]) => (
+                    <Radio key={mode} value={mode} label={label} />
+                  ))}
                 </Group>
               </Radio.Group>
 
@@ -1549,9 +1611,11 @@ const GetResults = () => {
               />
               <TextInput
                 label="Time between questions"
-                type="number" min={1}
+                type="number"
+                min={1}
                 withAsterisk
-                {...details.getInputProps("timeBetweenQuestions")} my="xs"
+                {...details.getInputProps("timeBetweenQuestions")}
+                my="xs"
               />
               <TextInput
                 placeholder="Job Link"

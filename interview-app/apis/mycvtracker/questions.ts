@@ -11,6 +11,16 @@ export const getMyQuestions = async (token: string, interviewType: string) => {
     throw e;
   }
 };
+export const add = async (token: string, interviewType: string) => {
+  try {
+    const response = await apiInstance.get(`/interviews/questions?token=${token}&interviewType=${interviewType}`);
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (e) {
+    throw e;
+  }
+};
 
 export const getMyMCQuestions = async (token: string, interviewType: string) => {
   try {
@@ -95,3 +105,5 @@ export const sendDeleteQuestion = async (token: string, question: Question) => {
     throw e;
   }
 };
+
+//http://localhost:3005//interview-app/VideoInterview?token=4a979b61bfc749a7bb5a65eafc2aff65&interviewType=PRODUCTMANAGER01

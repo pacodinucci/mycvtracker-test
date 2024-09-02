@@ -1,8 +1,21 @@
 import { apiInstance } from "./config";
+import { InterviewMode } from "../../types/assignInterview_types"; // Adjust the import path as necessary
 
 import { AssignInterviewRequest, AssignrefInterviewRequest, BookInterviewslot, BookTechInterviewslot, CandidateResultRequest, addEmployerRequest, addRecruiterRequest, addRefEmployerData, addReferralRequest, schduleInterviewRequest } from "../../types/assignInterview_types";
 
 export const sendAssignInterview = async (values: AssignInterviewRequest, token: string) => {
+  return apiInstance.post("interviews/assignInterview", values, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const assignInterviewMode = async (mode: keyof typeof InterviewMode, token: string) => {
+  const values = {
+    mode: InterviewMode[mode] // Use the selected interview mode
+  };
+
   return apiInstance.post("interviews/assignInterview", values, {
     headers: {
       Authorization: `Bearer ${token}`,

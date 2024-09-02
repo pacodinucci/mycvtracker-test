@@ -64,15 +64,17 @@ export const NavLinkRoutes = [
     icon: FaUserPlus,
     label: "Third Party Data",
   },
+
+ 
+ 
+
+
+  
+
   {
     path: "/Job-data",
     icon: FaFileAudio,
     label: "Job Data",
-  },
-  {
-    path : "/ScreenRecorder",
-    icon: FaFileAudio,
-    label: "Video",
   },
   // {
   //   path: "/assign-refinterview1",

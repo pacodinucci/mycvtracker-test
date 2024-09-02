@@ -9,7 +9,7 @@ export const storeUserInLocalStorage = (user: UserObject, token: string) => {
 
 export const getUserFromLocalStorage = () => {
   const value = localStorage.getItem("user");
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("");
   if (value && token) {
     const user = JSON.parse(value);
     return { user, token };
